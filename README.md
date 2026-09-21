@@ -8,7 +8,7 @@
 
 **Voxsuji** 由 *vox*（声音）与受中文“速记”启发的 *suji* 组合而来：声音进来，文字出去。
 
-> English documentation is available below.
+[English](#english) | [简体中文](#中文)
 
 ```text
 URL
@@ -855,4 +855,4 @@ There is no SLA and no guarantee of website-specific compatibility.
 
 ## License
 
-MIT — see `LICENSE`.
+[MIT License](LICENSE)
