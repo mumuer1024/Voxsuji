@@ -85,7 +85,7 @@ Voxsuji 不是视频下载器 UI，也不是特定视频网站客户端。
 以 Debian / Ubuntu 为例：
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/mumuer1024/Voxsuji.git
 cd voxsuji
 
 sudo apt-get install -y ffmpeg
@@ -542,7 +542,7 @@ If usable subtitles already exist, neither ASR nor object storage is required.
 ## Installation
 
 ```bash
-git clone <YOUR_REPOSITORY_URL>
+git clone https://github.com/mumuer1024/Voxsuji.git
 cd voxsuji
 
 sudo apt-get install -y ffmpeg
