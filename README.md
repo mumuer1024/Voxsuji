@@ -50,11 +50,11 @@ JSON / Markdown / SRT
 
 目前支持三种 ASR provider：
 
-| Provider | 标识 |
-| --- | --- |
-| 阿里云百炼 | `aliyun` |
-| 火山引擎 | `volcengine` |
-| 腾讯云 | `tencent` |
+| Provider | 标识           |
+| -------- | ------------ |
+| 阿里云百炼    | `aliyun`     |
+| 火山引擎     | `volcengine` |
+| 腾讯云      | `tencent`    |
 
 你只需要配置自己实际使用的一家。
 
@@ -255,10 +255,10 @@ asr-tmp/<random>.mp3
 通过我的推广链接注册，新用户目前可以获得 **首月 5 折优惠券**：
 
 **雨云推广链接：**  
-`https://www.rainyun.com/NjkwNzM4_`
+[https://www.rainyun.com/NjkwNzM4_](https://www.rainyun.com/NjkwNzM4_)
 
 > **推广说明：** 上面是作者的推广链接。通过该链接注册、消费可能会给我带来积分或销售提成，但不会因此提高你的实际购买价格。活动内容可能调整，请以雨云当前规则为准。
->
+> 
 > 雨云只是一个可选的 S3-compatible 服务商。Voxsuji 不依赖雨云，也没有针对特定对象存储厂商的专用实现；你可以使用任何符合配置要求的 S3-compatible object storage。
 
 ---
@@ -401,12 +401,12 @@ VOXSUJI_DATA_DIR=/your/data/path
 
 退出码：
 
-| Code | 含义 |
-| ---: | --- |
-| `0` | 成功 |
-| `1` | 命令 / pipeline 失败 |
-| `2` | 参数使用错误 |
-| `3` | 缺少必要配置 |
+| Code | 含义               |
+| ----:| ---------------- |
+| `0`  | 成功               |
+| `1`  | 命令 / pipeline 失败 |
+| `2`  | 参数使用错误           |
+| `3`  | 缺少必要配置           |
 
 ---
 
@@ -509,11 +509,11 @@ It is:
 
 Supported ASR adapters:
 
-| Provider | Name |
-| --- | --- |
-| Alibaba Cloud Bailian | `aliyun` |
-| Volcengine | `volcengine` |
-| Tencent Cloud | `tencent` |
+| Provider              | Name         |
+| --------------------- | ------------ |
+| Alibaba Cloud Bailian | `aliyun`     |
+| Volcengine            | `volcengine` |
+| Tencent Cloud         | `tencent`    |
 
 Only the provider you actually use needs to be configured.
 
@@ -652,10 +652,10 @@ If you do not already have S3-compatible object storage, RainYun is one option.
 
 New users registering through my referral link currently receive a **50% discount coupon for their first month**:
 
-`https://www.rainyun.com/NjkwNzM4_`
+[https://www.rainyun.com/NjkwNzM4_](https://www.rainyun.com/NjkwNzM4_)
 
 > **Disclosure:** This is an affiliate/referral link. Registrations or purchases made through it may earn me points or sales commission, without increasing your purchase price. Promotion terms may change; please refer to RainYun's current terms.
->
+> 
 > RainYun is entirely optional. Voxsuji does not depend on RainYun or contain vendor-specific integration. Any compatible S3 object storage can be used.
 
 ---
@@ -778,12 +778,12 @@ On failure:
 
 Exit codes:
 
-| Code | Meaning |
-| ---: | --- |
-| `0` | success |
-| `1` | command / pipeline failure |
-| `2` | usage error |
-| `3` | missing configuration |
+| Code | Meaning                    |
+| ----:| -------------------------- |
+| `0`  | success                    |
+| `1`  | command / pipeline failure |
+| `2`  | usage error                |
+| `3`  | missing configuration      |
 
 ---
 
