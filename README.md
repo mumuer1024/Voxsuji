@@ -255,7 +255,7 @@ asr-tmp/<random>.mp3
 通过我的推广链接注册，新用户目前可以获得 **首月 5 折优惠券**：
 
 **雨云推广链接：**  
-https://www.rainyun.com/NjkwNzM4_
+`https://www.rainyun.com/NjkwNzM4_`
 
 > **推广说明：** 上面是作者的推广链接。通过该链接注册、消费可能会给我带来积分或销售提成，但不会因此提高你的实际购买价格。活动内容可能调整，请以雨云当前规则为准。
 >
@@ -652,7 +652,7 @@ If you do not already have S3-compatible object storage, RainYun is one option.
 
 New users registering through my referral link currently receive a **50% discount coupon for their first month**:
 
-https://www.rainyun.com/NjkwNzM4_
+`https://www.rainyun.com/NjkwNzM4_`
 
 > **Disclosure:** This is an affiliate/referral link. Registrations or purchases made through it may earn me points or sales commission, without increasing your purchase price. Promotion terms may change; please refer to RainYun's current terms.
 >
