@@ -5,7 +5,7 @@ Covers the contract of `[cookies] file`:
   * configured + valid file        -> every yt-dlp call gets `--cookies <path>`
     (metadata, subtitles, audio download);
   * configured + broken file       -> a clear error, never silent pretend;
-  * `media doctor`                 -> local-only checks, never fails, never
+  * `voxsuji doctor`                 -> local-only checks, never fails, never
     prints cookie contents;
   * logs                           -> cookie values/paths are redacted.
 
@@ -25,11 +25,11 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from media_tool import cli  # noqa: E402
-from media_tool.config import Config  # noqa: E402
-from media_tool.urls import identify  # noqa: E402
-from media_tool.util import ConfigurationError  # noqa: E402
-from media_tool.ytdlp import YtDlp  # noqa: E402
+from voxsuji import cli  # noqa: E402
+from voxsuji.config import Config  # noqa: E402
+from voxsuji.urls import identify  # noqa: E402
+from voxsuji.util import ConfigurationError  # noqa: E402
+from voxsuji.ytdlp import YtDlp  # noqa: E402
 
 FAKE_COOKIE_VALUE = "session=LEAKPROOF_cookie_value_9f3a"
 
@@ -57,7 +57,7 @@ def _cookie_path(tmp: Path, mode: int = 0o600) -> Path:
 
 
 class RunRecorder:
-    """Replaces media_tool.ytdlp.run: records args, returns a stub process."""
+    """Replaces voxsuji.ytdlp.run: records args, returns a stub process."""
 
     def __init__(self, *, stdout: str = "{}", returncode: int = 0, stderr: str = ""):
         self.calls: list[list[str]] = []
@@ -74,7 +74,7 @@ class RunRecorder:
 
 def _patched_ytdlp(tmp: Path) -> tuple[YtDlp, RunRecorder, unittest.mock._patch]:
     recorder = RunRecorder()
-    patcher = unittest.mock.patch("media_tool.ytdlp.run", recorder)
+    patcher = unittest.mock.patch("voxsuji.ytdlp.run", recorder)
     patcher.start()
     return YtDlp(Config(root=tmp)), recorder, patcher
 
@@ -216,12 +216,12 @@ class BrokenCookieConfigTests(unittest.TestCase):
 
 
 class DoctorCookieTests(unittest.TestCase):
-    """`media doctor` reports cookie state locally, never failing on it."""
+    """`voxsuji doctor` reports cookie state locally, never failing on it."""
 
     def _doctor(self, tmp: Path) -> dict:
         buffer = io.StringIO()
         with contextlib.redirect_stdout(buffer), unittest.mock.patch(
-            "media_tool.cli.Config", lambda: Config(root=tmp)
+            "voxsuji.cli.Config", lambda: Config(root=tmp)
         ):
             code = cli.main(["doctor"])
         self.assertEqual(code, 0)  # cookie warnings/problems never fail doctor
@@ -273,7 +273,7 @@ class DoctorCookieTests(unittest.TestCase):
             _write_config(path, str(target))
             buffer = io.StringIO()
             with contextlib.redirect_stdout(buffer), unittest.mock.patch(
-                "media_tool.cli.Config", lambda: Config(root=tmp)
+                "voxsuji.cli.Config", lambda: Config(root=tmp)
             ):
                 cli.main(["doctor"])
             self.assertNotIn(FAKE_COOKIE_VALUE, buffer.getvalue())
@@ -283,7 +283,7 @@ class LogLeakTests(unittest.TestCase):
     """Cookie values and paths never reach the command log."""
 
     def test_command_logline_redacts_cookie_value(self):
-        from media_tool.util import _command_logline
+        from voxsuji.util import _command_logline
 
         cmd = ["yt-dlp", "--no-progress", "--cookies", FAKE_COOKIE_VALUE, "--dump-single-json", "https://x"]
         line = _command_logline(cmd)
@@ -294,12 +294,12 @@ class LogLeakTests(unittest.TestCase):
     def test_real_run_logging_redacts_cookie_value(self):
         import tempfile
 
-        from media_tool import util
+        from voxsuji import util
 
         with tempfile.TemporaryDirectory() as tmp:
             target = str(Path(tmp) / "cookies.txt")
             captured: list[str] = []
-            with unittest.mock.patch("media_tool.util.log", side_effect=captured.append):
+            with unittest.mock.patch("voxsuji.util.log", side_effect=captured.append):
                 util.run(["echo", "--cookies", target])
             self.assertTrue(captured)
             for line in captured:
@@ -309,7 +309,7 @@ class LogLeakTests(unittest.TestCase):
     def test_probe_log_line_never_exposes_cookie_path(self):
         # Whatever the arg layout, the log line `util.run` would print for a
         # real probe contains neither the cookie path nor any cookie content.
-        from media_tool.util import _command_logline
+        from voxsuji.util import _command_logline
 
         with tempfile.TemporaryDirectory() as tmp:
             path = Path(tmp)

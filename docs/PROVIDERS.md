@@ -43,7 +43,7 @@ the result into the shared transcript schema.
 
 ## Choosing a provider
 
-- `media doctor` reports which providers are configured and which adapters
+- `voxsuji doctor` reports which providers are configured and which adapters
   are marked verified, without printing any secret value.
 - A selected provider without credentials fails explicitly with exit code 3
   and names the missing variables. There is no silent fallback to another

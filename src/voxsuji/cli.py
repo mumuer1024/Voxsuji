@@ -1,4 +1,4 @@
-"""Command line interface: `media transcript <URL>` / `media doctor`."""
+"""Command line interface: `voxsuji transcript <URL>` / `voxsuji doctor`."""
 
 from __future__ import annotations
 
@@ -153,13 +153,13 @@ def cmd_doctor(args: argparse.Namespace) -> int:
 # -- parser ---------------------------------------------------------------
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        prog="media",
+        prog="voxsuji",
         description=(
             "Turn an online video URL into structured, cacheable transcript text."
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--version", action="version", version=f"media {__version__}")
+    parser.add_argument("--version", action="version", version=f"voxsuji {__version__}")
     sub = parser.add_subparsers(dest="command", metavar="<command>")
 
     t = sub.add_parser(

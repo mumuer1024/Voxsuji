@@ -53,7 +53,7 @@ def build_client(config: Config) -> S3Client:
 
 def verify_public_read(url: str, *, timeout: float = 60, expect_prefix: bytes | None = None) -> dict:
     """Anonymous GET/HEAD check — proves the ASR service can fetch the object."""
-    request = urllib.request.Request(url, headers={"User-Agent": "media-tool/0.1"})
+    request = urllib.request.Request(url, headers={"User-Agent": "voxsuji/0.1"})
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             status = response.status

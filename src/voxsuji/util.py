@@ -76,5 +76,5 @@ def read_json(path: Path):
     return json.loads(Path(path).read_text(encoding="utf-8"))
 
 
-def temp_workdir(prefix: str = "media-") -> tempfile.TemporaryDirectory:
+def temp_workdir(prefix: str = "voxsuji-") -> tempfile.TemporaryDirectory:
     return tempfile.TemporaryDirectory(prefix=prefix)

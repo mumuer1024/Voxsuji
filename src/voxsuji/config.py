@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = Path(os.environ.get("MEDIA_DATA_DIR", PROJECT_ROOT)).expanduser()
+DATA_DIR = Path(os.environ.get("VOXSUJI_DATA_DIR", PROJECT_ROOT)).expanduser()
 
 DEFAULT_PROVIDER = "aliyun"
 KNOWN_PROVIDERS = ("aliyun", "volcengine", "tencent")
@@ -179,7 +179,7 @@ def cookies_file_problem(path: Path) -> str | None:
     """Return a human-readable problem with a configured cookie file, else None.
 
     Used both by the yt-dlp wrapper (fail fast instead of silently pretending
-    cookies are in use) and by `media doctor` (report the same facts). Only
+    cookies are in use) and by `voxsuji doctor` (report the same facts). Only
     local file checks — never touches the network or the file's contents.
     """
     if not path.exists():

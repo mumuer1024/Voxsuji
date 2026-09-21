@@ -1,4 +1,4 @@
-"""`media doctor` provider-status reporting.
+"""`voxsuji doctor` provider-status reporting.
 
 Kept separate from the normalization tests because it exercises the CLI surface
 and the VERIFIED_PROVIDERS list, not a provider response mapping.
@@ -17,12 +17,12 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from media_tool import cli  # noqa: E402
-from media_tool.config import KNOWN_PROVIDERS, VERIFIED_PROVIDERS  # noqa: E402
+from voxsuji import cli  # noqa: E402
+from voxsuji.config import KNOWN_PROVIDERS, VERIFIED_PROVIDERS  # noqa: E402
 
 
 class ProviderStatusReportingTests(unittest.TestCase):
-    """`media doctor` must not drift from the documented verification status."""
+    """`voxsuji doctor` must not drift from the documented verification status."""
 
     def test_doctor_status_matches_the_verified_provider_list(self):
         buffer = io.StringIO()

@@ -12,9 +12,9 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from media_tool import formatters, storage, subtitles, urls  # noqa: E402
-from media_tool.models import Segment, Transcript, VideoMeta, Word  # noqa: E402
-from media_tool.s3 import S3Client  # noqa: E402
+from voxsuji import formatters, storage, subtitles, urls  # noqa: E402
+from voxsuji.models import Segment, Transcript, VideoMeta, Word  # noqa: E402
+from voxsuji.s3 import S3Client  # noqa: E402
 
 FIXTURES = Path(__file__).resolve().parent / "fixtures"
 
@@ -139,8 +139,8 @@ class ProviderNormalizationTests(unittest.TestCase):
     def test_aliyun_real_response_shape(self):
         import json
 
-        from media_tool.config import Config
-        from media_tool.providers.aliyun import AliyunProvider
+        from voxsuji.config import Config
+        from voxsuji.providers.aliyun import AliyunProvider
 
         raw = json.loads((FIXTURES / "aliyun_transcription.json").read_text(encoding="utf-8"))
         provider = AliyunProvider(Config())
@@ -157,8 +157,8 @@ class ProviderNormalizationTests(unittest.TestCase):
         """Fixture is a trimmed copy of a real DescribeTaskStatus response."""
         import json
 
-        from media_tool.config import Config
-        from media_tool.providers.tencent import TencentProvider
+        from voxsuji.config import Config
+        from voxsuji.providers.tencent import TencentProvider
 
         data = json.loads((FIXTURES / "tencent_result.json").read_text(encoding="utf-8"))
         provider = TencentProvider(Config())
@@ -181,8 +181,8 @@ class ProviderNormalizationTests(unittest.TestCase):
         self.assertIsNone(first.speaker)
 
     def test_tencent_annotated_offset_holds_for_a_one_speaker_id(self):
-        from media_tool.config import Config
-        from media_tool.providers.tencent import TencentProvider
+        from voxsuji.config import Config
+        from voxsuji.providers.tencent import TencentProvider
 
         data = {
             "AudioDuration": 3.0,
@@ -208,8 +208,8 @@ class ProviderNormalizationTests(unittest.TestCase):
         """ResTextFormat=3 is the documented 字幕/按标点分段 shape, not a paid tier."""
         import os
 
-        from media_tool.config import Config
-        from media_tool.providers import tencent as tencent_module
+        from voxsuji.config import Config
+        from voxsuji.providers import tencent as tencent_module
 
         self.enterContext(
             unittest.mock.patch.dict(
@@ -245,8 +245,8 @@ class ProviderNormalizationTests(unittest.TestCase):
         """Fixture is a trimmed copy of a real volc.seedasr.auc query response."""
         import json
 
-        from media_tool.config import Config
-        from media_tool.providers.volcengine import VolcengineProvider
+        from voxsuji.config import Config
+        from voxsuji.providers.volcengine import VolcengineProvider
 
         body = json.loads((FIXTURES / "volcengine_query.json").read_text(encoding="utf-8"))
         result = VolcengineProvider(Config())._normalize(body, task_id="t")
@@ -264,8 +264,8 @@ class ProviderNormalizationTests(unittest.TestCase):
 
     def test_volcengine_drops_the_negative_timing_sentinel(self):
         """The service marks untimed whitespace separators with -1 ms."""
-        from media_tool.config import Config
-        from media_tool.providers.volcengine import VolcengineProvider
+        from voxsuji.config import Config
+        from voxsuji.providers.volcengine import VolcengineProvider
 
         body = {
             "audio_info": {"duration": 2100},
@@ -303,8 +303,8 @@ class VolcengineAuthTests(unittest.TestCase):
         import os
         import unittest.mock
 
-        from media_tool.config import Config
-        from media_tool.providers.volcengine import VolcengineProvider
+        from voxsuji.config import Config
+        from voxsuji.providers.volcengine import VolcengineProvider
 
         env = {
             "VOLC_APP_ID": "app-id-value",
@@ -345,7 +345,7 @@ class ProviderErrorEnvelopeTests(unittest.TestCase):
         import io
         import urllib.error
 
-        from media_tool.providers.base import ProviderError, _http_json_ex
+        from voxsuji.providers.base import ProviderError, _http_json_ex
 
         # Observed verbatim from the live Volcengine endpoint (HTTP 403).
         body = (
@@ -374,9 +374,9 @@ class ProviderErrorEnvelopeTests(unittest.TestCase):
     def test_tencent_error_envelope_raises_provider_error(self):
         import os
 
-        from media_tool.config import Config
-        from media_tool.providers import tencent as tencent_module
-        from media_tool.providers.base import ProviderError
+        from voxsuji.config import Config
+        from voxsuji.providers import tencent as tencent_module
+        from voxsuji.providers.base import ProviderError
 
         self.enterContext(
             unittest.mock.patch.dict(
@@ -405,7 +405,7 @@ class ProviderErrorEnvelopeTests(unittest.TestCase):
 
 class PollBehaviourTests(unittest.TestCase):
     def test_poll_times_out_with_a_diagnostic_error(self):
-        from media_tool.providers.base import ProviderError, _poll
+        from voxsuji.providers.base import ProviderError, _poll
 
         calls = {"n": 0}
 
@@ -420,14 +420,14 @@ class PollBehaviourTests(unittest.TestCase):
         self.assertGreater(calls["n"], 1)
 
     def test_poll_stops_at_failure(self):
-        from media_tool.providers.base import ProviderError, _poll
+        from voxsuji.providers.base import ProviderError, _poll
 
         with self.assertRaises(ProviderError) as ctx:
             _poll(5, 0.01, lambda: ("failed", {"status": "FAILED", "err": "boom"}), describe="t")
         self.assertIn("boom", str(ctx.exception))
 
     def test_poll_returns_on_done(self):
-        from media_tool.providers.base import _poll
+        from voxsuji.providers.base import _poll
 
         self.assertEqual(_poll(5, 0.01, lambda: ("done", {"status": "SUCCEEDED"}), describe="t")["status"], "SUCCEEDED")
 
@@ -438,8 +438,8 @@ class CleanupOrderingTests(unittest.TestCase):
         import tempfile
         from pathlib import Path
 
-        from media_tool.config import Config
-        from media_tool.transcript import _run_asr
+        from voxsuji.config import Config
+        from voxsuji.transcript import _run_asr
 
         class FakeYtDlp:
             def __init__(self, *_, **__):
@@ -478,13 +478,13 @@ class CleanupOrderingTests(unittest.TestCase):
                 raise RuntimeError("provider exploded")
 
         config = Config()
-        with unittest.mock.patch("media_tool.transcript.YtDlp", FakeYtDlp), unittest.mock.patch(
-            "media_tool.transcript.storage.build_client", return_value=client
+        with unittest.mock.patch("voxsuji.transcript.YtDlp", FakeYtDlp), unittest.mock.patch(
+            "voxsuji.transcript.storage.build_client", return_value=client
         ), unittest.mock.patch(
-            "media_tool.transcript.storage.verify_public_read",
+            "voxsuji.transcript.storage.verify_public_read",
             return_value={"status": 200, "content_type": "audio/mpeg", "content_length": "14"},
         ), unittest.mock.patch(
-            "media_tool.transcript.get_provider", return_value=FailingProvider()
+            "voxsuji.transcript.get_provider", return_value=FailingProvider()
         ):
             with self.assertRaises(RuntimeError):
                 _run_asr(  # type: ignore[arg-type]
@@ -507,8 +507,8 @@ class CacheRoundTripTests(unittest.TestCase):
         import tempfile
         from pathlib import Path
 
-        from media_tool.cache import Cache, store_transcript
-        from media_tool.transcript import _from_payload
+        from voxsuji.cache import Cache, store_transcript
+        from voxsuji.transcript import _from_payload
 
         ref = urls.identify("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         transcript = Transcript(
@@ -543,8 +543,8 @@ class CacheRoundTripTests(unittest.TestCase):
         import tempfile
         from pathlib import Path
 
-        from media_tool.cache import Cache
-        from media_tool.transcript import _existing_files
+        from voxsuji.cache import Cache
+        from voxsuji.transcript import _existing_files
 
         ref = urls.identify("https://www.youtube.com/watch?v=dQw4w9WgXcQ")
         with tempfile.TemporaryDirectory() as tmp:
@@ -559,7 +559,7 @@ class CacheRoundTripTests(unittest.TestCase):
 
 class ConfigPlaceholderTests(unittest.TestCase):
     def test_placeholders_are_not_credentials(self):
-        from media_tool.config import _is_real
+        from voxsuji.config import _is_real
 
         self.assertFalse(_is_real(None))
         self.assertFalse(_is_real(""))

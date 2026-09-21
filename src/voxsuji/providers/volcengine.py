@@ -74,7 +74,7 @@ class VolcengineProvider(BaseProvider):
         task_id = str(uuid.uuid4())
         audio_format = (audio_path.suffix.lstrip(".") if audio_path else "mp3") or "mp3"
         payload = {
-            "user": {"uid": self.config.get("VOLC_UID", "media-tool") or "media-tool"},
+            "user": {"uid": self.config.get("VOLC_UID", "voxsuji") or "voxsuji"},
             "audio": {"url": audio_url, "format": audio_format},
             "request": {
                 "model_name": "bigmodel",

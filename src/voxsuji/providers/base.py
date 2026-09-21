@@ -73,7 +73,7 @@ def _http_json_ex(
 
 
 def _download_json(url: str, *, timeout: float = 120) -> dict:
-    request = urllib.request.Request(url, headers={"User-Agent": "media-tool/0.1"})
+    request = urllib.request.Request(url, headers={"User-Agent": "voxsuji/0.1"})
     try:
         with urllib.request.urlopen(request, timeout=timeout) as response:
             return json.loads(response.read().decode("utf-8"))

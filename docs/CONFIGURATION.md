@@ -1,17 +1,17 @@
 # Configuration
 
-`media` reads configuration from three places, in increasing precedence:
+`Voxsuji` reads configuration from three places, in increasing precedence:
 
 1. `config.ini` — non-secret settings (see `config.example.ini`).
 2. `.env` — secrets (git-ignored, see `.env.example`).
 3. real environment variables — always win over both of the above.
 
-By default both files are read from the project root. Set `MEDIA_DATA_DIR`
+By default both files are read from the project root. Set `VOXSUJI_DATA_DIR`
 to point the data directory elsewhere (it relocates `.env`, `config.ini` and
 `cache/` together):
 
 ```bash
-export MEDIA_DATA_DIR=/path/to/data
+export VOXSUJI_DATA_DIR=/path/to/data
 ```
 
 ## `config.ini`
@@ -32,7 +32,7 @@ Copy `config.example.ini` to `config.ini` and edit.
 ## Secrets (`.env`)
 
 Copy `.env.example` to `.env` (`chmod 600`) and fill in the values. Secret
-values never appear in logs or in `media doctor` output.
+values never appear in logs or in `voxsuji doctor` output.
 
 ## Storage addressing
 
