@@ -1,0 +1,211 @@
+{
+ "file_url": "https://<bucket>.s3.example.com/asr-tmp/<random>.mp3",
+ "properties": {
+  "audio_format": "mp3",
+  "channels": [
+   0
+  ],
+  "original_sampling_rate": 16000,
+  "original_duration_in_milliseconds": 212309
+ },
+ "transcripts": [
+  {
+   "channel_id": 0,
+   "content_duration_in_milliseconds": 161590,
+   "text": "we're no strangers to love you know the rules and so do i. I feel commitments while I'm thinking of you. Wouldn't get th",
+   "sentences": [
+    {
+     "begin_time": 19000,
+     "end_time": 26090,
+     "text": "we're no strangers to love you know the rules and so do i. ",
+     "sentence_id": 1,
+     "words": [
+      {
+       "begin_time": 19000,
+       "end_time": 19160,
+       "text": "we",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 19160,
+       "end_time": 19200,
+       "text": "'",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 19200,
+       "end_time": 19280,
+       "text": "re",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 19280,
+       "end_time": 19600,
+       "text": " no",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 19600,
+       "end_time": 20040,
+       "text": " strangers",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 20040,
+       "end_time": 20400,
+       "text": " to",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 20400,
+       "end_time": 23000,
+       "text": " love",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 23000,
+       "end_time": 23200,
+       "text": " you",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 23200,
+       "end_time": 23520,
+       "text": " know",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 23520,
+       "end_time": 23760,
+       "text": " the",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 23760,
+       "end_time": 24520,
+       "text": " rules",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 24520,
+       "end_time": 24760,
+       "text": " and",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 24760,
+       "end_time": 25360,
+       "text": " so",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 25360,
+       "end_time": 25720,
+       "text": " do",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 25720,
+       "end_time": 26090,
+       "text": " i",
+       "punctuation": ". ",
+       "confidence": 1.0
+      }
+     ]
+    },
+    {
+     "begin_time": 27170,
+     "end_time": 31570,
+     "text": "I feel commitments while I'm thinking of you.",
+     "sentence_id": 2,
+     "words": [
+      {
+       "begin_time": 27170,
+       "end_time": 27410,
+       "text": "I",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 27410,
+       "end_time": 27930,
+       "text": " feel",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 27930,
+       "end_time": 28570,
+       "text": " commitments",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 28570,
+       "end_time": 28850,
+       "text": " while",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 28850,
+       "end_time": 28930,
+       "text": " I",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 28930,
+       "end_time": 29130,
+       "text": "'",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 29130,
+       "end_time": 29330,
+       "text": "m",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 29330,
+       "end_time": 29970,
+       "text": " thinking",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 29970,
+       "end_time": 31450,
+       "text": " of",
+       "punctuation": "",
+       "confidence": 1.0
+      },
+      {
+       "begin_time": 31450,
+       "end_time": 31570,
+       "text": " you",
+       "punctuation": ".",
+       "confidence": 1.0
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,274 @@
+{
+  "_note": "Trimmed to the first two utterances of a real volc.seedasr.auc response. Service identifiers removed. Note the -1 timing sentinel on the whitespace tokens.",
+  "audio_info": {
+    "duration": 152496
+  },
+  "result": {
+    "additions": {
+      "duration": "152496"
+    },
+    "text": "我发现 up 主真是有才。张三去嫖娼，约好一次3千啊，女的说3千一次，张三说那么贵，我给你5千。女的说那好啊。最后调完之后，女的气坏了，一点中国人民银行，那个民是那个民。请问该案如何处理？我们学法律就得要讲道理。话说挑河沙，三来造屋成，却不知家如何进行，请各位继续往下。听往下听往下听，他说3千一只，咱咱有点不高兴，看不起谁太便宜，至少不钱砸地，那女子一听吃得开心，不愧是大老板，出手阔气，小妹一定包你满意。女子笑着说，大哥。你做什么工作？出手如此阔绰？跟小妹说一说，滋润小电子车。小妹想要和你长期合作。你看我有没有这个资格？他三十多了一个，没有事情不做，平时好吃懒做。今天收成不错，捡了一大明币，准备偏朝，大月服务周到，一切好说。啊重点说一下最后的结果，两人把事情闹到派出所，他将如何处罚？他有没有犯法？抢劫、使用假币、诈骗和不可理，这些都不成立。他的非法赌博、毒品交易难道就拿他没一点办法？可，一直难。可以治安管理处罚吗？他跟这女的嫖娼，是不是两个人都可以抓起来啊？这个视频给个三连。大家觉得合不合适？合适的不得了。",
+    "utterances": [
+      {
+        "end_time": 2100,
+        "start_time": 260,
+        "text": "我发现 up 主真是有才。",
+        "words": [
+          {
+            "confidence": 0,
+            "end_time": 500,
+            "start_time": 260,
+            "text": "我"
+          },
+          {
+            "confidence": 0,
+            "end_time": 660,
+            "start_time": 500,
+            "text": "发"
+          },
+          {
+            "confidence": 0,
+            "end_time": 780,
+            "start_time": 660,
+            "text": "现"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 1020,
+            "start_time": 940,
+            "text": "up"
+          },
+          {
+            "confidence": 0,
+            "end_time": -1,
+            "start_time": -1,
+            "text": " "
+          },
+          {
+            "confidence": 0,
+            "end_time": 1380,
+            "start_time": 1180,
+            "text": "主"
+          },
+          {
+            "confidence": 0,
+            "end_time": 1540,
+            "start_time": 1420,
+            "text": "真"
+          },
+          {
+            "confidence": 0,
+            "end_time": 1660,
+            "start_time": 1540,
+            "text": "是"
+          },
+          {
+            "confidence": 0,
+            "end_time": 1860,
+            "start_time": 1660,
+            "text": "有"
+          },
+          {
+            "confidence": 0,
+            "end_time": 2100,
+            "start_time": 1860,
+            "text": "才"
+          }
+        ]
+      },
+      {
+        "end_time": 9820,
+        "start_time": 3260,
+        "text": "张三去嫖娼，约好一次3千啊，女的说3千一次，张三说那么贵，我给你5千。",
+        "words": [
+          {
+            "confidence": 0,
+            "end_time": 3300,
+            "start_time": 3260,
+            "text": "张"
+          },
+          {
+            "confidence": 0,
+            "end_time": 3500,
+            "start_time": 3460,
+            "text": "三"
+          },
+          {
+            "confidence": 0,
+            "end_time": 3740,
+            "start_time": 3580,
+            "text": "去"
+          },
+          {
+            "confidence": 0,
+            "end_time": 3860,
+            "start_time": 3780,
+            "text": "嫖"
+          },
+          {
+            "confidence": 0,
+            "end_time": 4020,
+            "start_time": 3980,
+            "text": "娼"
+          },
+          {
+            "confidence": 0,
+            "end_time": 4460,
+            "start_time": 4260,
+            "text": "约"
+          },
+          {
+            "confidence": 0,
+            "end_time": 4660,
+            "start_time": 4460,
+            "text": "好"
+          },
+          {
+            "confidence": 0,
+            "end_time": 4820,
+            "start_time": 4660,
+            "text": "一"
+          },
+          {
+            "confidence": 0,
+            "end_time": 4940,
+            "start_time": 4820,
+            "text": "次"
+          },
+          {
+            "confidence": 0,
+            "end_time": 5140,
+            "start_time": 4940,
+            "text": "3"
+          },
+          {
+            "confidence": 0,
+            "end_time": 5300,
+            "start_time": 5180,
+            "text": "千"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6220,
+            "start_time": 6100,
+            "text": "啊"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6460,
+            "start_time": 6420,
+            "text": "女"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6580,
+            "start_time": 6540,
+            "text": "的"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6780,
+            "start_time": 6660,
+            "text": "说"
+          },
+          {
+            "confidence": 0,
+            "end_time": 6940,
+            "start_time": 6780,
+            "text": "3"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7100,
+            "start_time": 6940,
+            "text": "千"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7260,
+            "start_time": 7100,
+            "text": "一"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7340,
+            "start_time": 7260,
+            "text": "次"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7500,
+            "start_time": 7460,
+            "text": "张"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7620,
+            "start_time": 7580,
+            "text": "三"
+          },
+          {
+            "confidence": 0,
+            "end_time": 7900,
+            "start_time": 7700,
+            "text": "说"
+          },
+          {
+            "confidence": 0,
+            "end_time": 8020,
+            "start_time": 7900,
+            "text": "那"
+          },
+          {
+            "confidence": 0,
+            "end_time": 8140,
+            "start_time": 8020,
+            "text": "么"
+          },
+          {
+            "confidence": 0,
+            "end_time": 8380,
+            "start_time": 8140,
+            "text": "贵"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9060,
+            "start_time": 8780,
+            "text": "我"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9220,
+            "start_time": 9060,
+            "text": "给"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9380,
+            "start_time": 9220,
+            "text": "你"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9580,
+            "start_time": 9380,
+            "text": "5"
+          },
+          {
+            "confidence": 0,
+            "end_time": 9820,
+            "start_time": 9580,
+            "text": "千"
+          }
+        ]
+      }
+    ]
+  }
+}

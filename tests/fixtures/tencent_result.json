@@ -1,0 +1,985 @@
+{
+  "_note": "Trimmed to the first two ResultDetail entries of a real DescribeTaskStatus (16k_zh, ResTextFormat=1) response. TaskId/RequestId masked.",
+  "TaskId": 0,
+  "Status": 2,
+  "StatusStr": "success",
+  "AudioDuration": 152.362688,
+  "Result": "[0:0.000,1:0.480]  我发现up主真是有才，张三去嫖娼，约好一次三亲啊，女的说3000一次。张三说那么贵，我给你5000。女的说那好啊。最后嫖完之后女的气坏了，连中国人民银行那个名是那个的吗？西请问下如何三好香鸡下鱼，但是我能乏你就得有到一社去不是，假如可进情，请各杯继续往下往下下，他说3000一次三有也不高兴，看不太一次找不切在那女子一时的开心，不愧是在了出收获且小，没一定我你满意女子。\n[1:0.480,2:0.520]  自叫是傻哥，你做什么不错，臭手如此苦活，那小妹说一说，只得说别是责，小妹想要喝你唱起可作你还喝有妹是的吃的。茶3是一个没多吃幸福错，平时好吃，他说不喜好吃多喝，今天收成不错，见了一套命币准备骗酬杀月不收到一切好说就起说重点说一下最后的结果。两人把事情到上出说茶3如何出发，他每个。\n[2:0.520,2:19.060]  犯法抢劫，只用假币诈天和不可比，这些都不成立，他的非法不呼脚难到就拿他每一点办法。可一直。\n[2:19.260,2:32.362]  出发可以治安管理处罚吗？他跟这女的嫖娼，是不是两个人都可以抓起来呀？这个视频3连，大家觉得合不合适，合适的不得了。\n",
+  "ResultDetail": [
+    {
+      "FinalSentence": "我发现up主真是有才，张三去嫖娼，约好一次三亲啊，女的说3000一次。张三说那么贵，我给你5000。女的说那好啊。最后嫖完之后女的气坏了，连中国人民银行那个名是那个的吗？西请问下如何三好香鸡下鱼，但是我能乏你就得有到一社去不是，假如可进情，请各杯继续往下往下下，他说3000一次三有也不高兴，看不太一次找不切在那女子一时的开心，不愧是在了出收获且小，没一定我你满意女子。",
+      "SliceSentence": "我 发现 up主 真是 有才 张三 去 嫖娼 约 好 一次 三 亲 啊 女的 说 3000一次 张三 说 那么 贵 我 给你 5000女的 说 那 好啊 最后 嫖 完 之后 女的 气 坏了 连 中国人民银行 那个 名 是 那个 的 吗 西 请问 下 如何 三好 香鸡 下 鱼 但是 我能 乏 你就 得 有 到 一 社 去 不是 假如 可 进 情 请 各 杯 继续 往下 往下 下 他 说 3000一次 三 有 也不 高兴 看不 太一 次 找 不 切 在 那女 子 一时 的 开心 不愧 是在 了 出 收获 且 小 没 一定 我 你 满意 女子",
+      "WrittenText": "",
+      "StartMs": 0,
+      "EndMs": 60480,
+      "SpeechSpeed": 2.8,
+      "WordsNum": 104,
+      "Words": [
+        {
+          "OffsetStartMs": 160,
+          "OffsetEndMs": 435,
+          "Word": "我"
+        },
+        {
+          "OffsetStartMs": 435,
+          "OffsetEndMs": 765,
+          "Word": "发现"
+        },
+        {
+          "OffsetStartMs": 765,
+          "OffsetEndMs": 1290,
+          "Word": "up主"
+        },
+        {
+          "OffsetStartMs": 1290,
+          "OffsetEndMs": 1590,
+          "Word": "真是"
+        },
+        {
+          "OffsetStartMs": 1590,
+          "OffsetEndMs": 2090,
+          "Word": "有才"
+        },
+        {
+          "OffsetStartMs": 3070,
+          "OffsetEndMs": 3525,
+          "Word": "张三"
+        },
+        {
+          "OffsetStartMs": 3525,
+          "OffsetEndMs": 3675,
+          "Word": "去"
+        },
+        {
+          "OffsetStartMs": 3675,
+          "OffsetEndMs": 4155,
+          "Word": "嫖娼"
+        },
+        {
+          "OffsetStartMs": 4155,
+          "OffsetEndMs": 4440,
+          "Word": "约"
+        },
+        {
+          "OffsetStartMs": 4440,
+          "OffsetEndMs": 4590,
+          "Word": "好"
+        },
+        {
+          "OffsetStartMs": 4590,
+          "OffsetEndMs": 4905,
+          "Word": "一次"
+        },
+        {
+          "OffsetStartMs": 4905,
+          "OffsetEndMs": 5070,
+          "Word": "三"
+        },
+        {
+          "OffsetStartMs": 5070,
+          "OffsetEndMs": 5360,
+          "Word": "亲"
+        },
+        {
+          "OffsetStartMs": 5980,
+          "OffsetEndMs": 6285,
+          "Word": "啊"
+        },
+        {
+          "OffsetStartMs": 6285,
+          "OffsetEndMs": 6570,
+          "Word": "女的"
+        },
+        {
+          "OffsetStartMs": 6570,
+          "OffsetEndMs": 6720,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 6720,
+          "OffsetEndMs": 7335,
+          "Word": "3000一次"
+        },
+        {
+          "OffsetStartMs": 7335,
+          "OffsetEndMs": 7620,
+          "Word": "张三"
+        },
+        {
+          "OffsetStartMs": 7620,
+          "OffsetEndMs": 7755,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 7755,
+          "OffsetEndMs": 8070,
+          "Word": "那么"
+        },
+        {
+          "OffsetStartMs": 8070,
+          "OffsetEndMs": 8360,
+          "Word": "贵"
+        },
+        {
+          "OffsetStartMs": 8740,
+          "OffsetEndMs": 9015,
+          "Word": "我"
+        },
+        {
+          "OffsetStartMs": 9015,
+          "OffsetEndMs": 9330,
+          "Word": "给你"
+        },
+        {
+          "OffsetStartMs": 9330,
+          "OffsetEndMs": 10545,
+          "Word": "5000女的"
+        },
+        {
+          "OffsetStartMs": 10545,
+          "OffsetEndMs": 10710,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 10710,
+          "OffsetEndMs": 10920,
+          "Word": "那"
+        },
+        {
+          "OffsetStartMs": 10920,
+          "OffsetEndMs": 11390,
+          "Word": "好啊"
+        },
+        {
+          "OffsetStartMs": 12280,
+          "OffsetEndMs": 12810,
+          "Word": "最后"
+        },
+        {
+          "OffsetStartMs": 12810,
+          "OffsetEndMs": 13050,
+          "Word": "嫖"
+        },
+        {
+          "OffsetStartMs": 13050,
+          "OffsetEndMs": 13245,
+          "Word": "完"
+        },
+        {
+          "OffsetStartMs": 13245,
+          "OffsetEndMs": 13620,
+          "Word": "之后"
+        },
+        {
+          "OffsetStartMs": 13620,
+          "OffsetEndMs": 14010,
+          "Word": "女的"
+        },
+        {
+          "OffsetStartMs": 14010,
+          "OffsetEndMs": 14235,
+          "Word": "气"
+        },
+        {
+          "OffsetStartMs": 14235,
+          "OffsetEndMs": 14655,
+          "Word": "坏了"
+        },
+        {
+          "OffsetStartMs": 14655,
+          "OffsetEndMs": 15000,
+          "Word": "连"
+        },
+        {
+          "OffsetStartMs": 15000,
+          "OffsetEndMs": 16790,
+          "Word": "中国人民银行"
+        },
+        {
+          "OffsetStartMs": 16960,
+          "OffsetEndMs": 17415,
+          "Word": "那个"
+        },
+        {
+          "OffsetStartMs": 17415,
+          "OffsetEndMs": 17750,
+          "Word": "名"
+        },
+        {
+          "OffsetStartMs": 18130,
+          "OffsetEndMs": 18405,
+          "Word": "是"
+        },
+        {
+          "OffsetStartMs": 18405,
+          "OffsetEndMs": 18615,
+          "Word": "那个"
+        },
+        {
+          "OffsetStartMs": 18615,
+          "OffsetEndMs": 18720,
+          "Word": "的"
+        },
+        {
+          "OffsetStartMs": 18720,
+          "OffsetEndMs": 18855,
+          "Word": "吗"
+        },
+        {
+          "OffsetStartMs": 18855,
+          "OffsetEndMs": 19130,
+          "Word": "西"
+        },
+        {
+          "OffsetStartMs": 22540,
+          "OffsetEndMs": 22980,
+          "Word": "请问"
+        },
+        {
+          "OffsetStartMs": 22980,
+          "OffsetEndMs": 23205,
+          "Word": "下"
+        },
+        {
+          "OffsetStartMs": 23205,
+          "OffsetEndMs": 23630,
+          "Word": "如何"
+        },
+        {
+          "OffsetStartMs": 24010,
+          "OffsetEndMs": 24930,
+          "Word": "三好"
+        },
+        {
+          "OffsetStartMs": 24930,
+          "OffsetEndMs": 25910,
+          "Word": "香鸡"
+        },
+        {
+          "OffsetStartMs": 26680,
+          "OffsetEndMs": 27080,
+          "Word": "下"
+        },
+        {
+          "OffsetStartMs": 27880,
+          "OffsetEndMs": 28280,
+          "Word": "鱼"
+        },
+        {
+          "OffsetStartMs": 28450,
+          "OffsetEndMs": 29085,
+          "Word": "但是"
+        },
+        {
+          "OffsetStartMs": 29085,
+          "OffsetEndMs": 29750,
+          "Word": "我能"
+        },
+        {
+          "OffsetStartMs": 29950,
+          "OffsetEndMs": 30300,
+          "Word": "乏"
+        },
+        {
+          "OffsetStartMs": 30300,
+          "OffsetEndMs": 30870,
+          "Word": "你就"
+        },
+        {
+          "OffsetStartMs": 30870,
+          "OffsetEndMs": 31170,
+          "Word": "得"
+        },
+        {
+          "OffsetStartMs": 31170,
+          "OffsetEndMs": 31520,
+          "Word": "有"
+        },
+        {
+          "OffsetStartMs": 32020,
+          "OffsetEndMs": 32370,
+          "Word": "到"
+        },
+        {
+          "OffsetStartMs": 32370,
+          "OffsetEndMs": 32720,
+          "Word": "一"
+        },
+        {
+          "OffsetStartMs": 34690,
+          "OffsetEndMs": 35025,
+          "Word": "社"
+        },
+        {
+          "OffsetStartMs": 35025,
+          "OffsetEndMs": 35340,
+          "Word": "去"
+        },
+        {
+          "OffsetStartMs": 35340,
+          "OffsetEndMs": 35925,
+          "Word": "不是"
+        },
+        {
+          "OffsetStartMs": 35925,
+          "OffsetEndMs": 36540,
+          "Word": "假如"
+        },
+        {
+          "OffsetStartMs": 36540,
+          "OffsetEndMs": 36810,
+          "Word": "可"
+        },
+        {
+          "OffsetStartMs": 36810,
+          "OffsetEndMs": 37110,
+          "Word": "进"
+        },
+        {
+          "OffsetStartMs": 37110,
+          "OffsetEndMs": 37460,
+          "Word": "情"
+        },
+        {
+          "OffsetStartMs": 37630,
+          "OffsetEndMs": 37980,
+          "Word": "请"
+        },
+        {
+          "OffsetStartMs": 37980,
+          "OffsetEndMs": 38295,
+          "Word": "各"
+        },
+        {
+          "OffsetStartMs": 38295,
+          "OffsetEndMs": 38595,
+          "Word": "杯"
+        },
+        {
+          "OffsetStartMs": 38595,
+          "OffsetEndMs": 39195,
+          "Word": "继续"
+        },
+        {
+          "OffsetStartMs": 39195,
+          "OffsetEndMs": 39860,
+          "Word": "往下"
+        },
+        {
+          "OffsetStartMs": 40330,
+          "OffsetEndMs": 41060,
+          "Word": "往下"
+        },
+        {
+          "OffsetStartMs": 41530,
+          "OffsetEndMs": 41930,
+          "Word": "下"
+        },
+        {
+          "OffsetStartMs": 43030,
+          "OffsetEndMs": 43365,
+          "Word": "他"
+        },
+        {
+          "OffsetStartMs": 43365,
+          "OffsetEndMs": 43650,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 43650,
+          "OffsetEndMs": 44870,
+          "Word": "3000一次"
+        },
+        {
+          "OffsetStartMs": 45400,
+          "OffsetEndMs": 45735,
+          "Word": "三"
+        },
+        {
+          "OffsetStartMs": 45735,
+          "OffsetEndMs": 46020,
+          "Word": "有"
+        },
+        {
+          "OffsetStartMs": 46020,
+          "OffsetEndMs": 46635,
+          "Word": "也不"
+        },
+        {
+          "OffsetStartMs": 46635,
+          "OffsetEndMs": 47240,
+          "Word": "高兴"
+        },
+        {
+          "OffsetStartMs": 47470,
+          "OffsetEndMs": 48200,
+          "Word": "看不"
+        },
+        {
+          "OffsetStartMs": 48640,
+          "OffsetEndMs": 49575,
+          "Word": "太一"
+        },
+        {
+          "OffsetStartMs": 49575,
+          "OffsetEndMs": 49905,
+          "Word": "次"
+        },
+        {
+          "OffsetStartMs": 49905,
+          "OffsetEndMs": 50205,
+          "Word": "找"
+        },
+        {
+          "OffsetStartMs": 50205,
+          "OffsetEndMs": 50490,
+          "Word": "不"
+        },
+        {
+          "OffsetStartMs": 50490,
+          "OffsetEndMs": 50775,
+          "Word": "切"
+        },
+        {
+          "OffsetStartMs": 50775,
+          "OffsetEndMs": 51110,
+          "Word": "在"
+        },
+        {
+          "OffsetStartMs": 51880,
+          "OffsetEndMs": 52320,
+          "Word": "那女"
+        },
+        {
+          "OffsetStartMs": 52320,
+          "OffsetEndMs": 52545,
+          "Word": "子"
+        },
+        {
+          "OffsetStartMs": 52545,
+          "OffsetEndMs": 53360,
+          "Word": "一时"
+        },
+        {
+          "OffsetStartMs": 53410,
+          "OffsetEndMs": 53760,
+          "Word": "的"
+        },
+        {
+          "OffsetStartMs": 53760,
+          "OffsetEndMs": 54330,
+          "Word": "开心"
+        },
+        {
+          "OffsetStartMs": 54330,
+          "OffsetEndMs": 54705,
+          "Word": "不愧"
+        },
+        {
+          "OffsetStartMs": 54705,
+          "OffsetEndMs": 55245,
+          "Word": "是在"
+        },
+        {
+          "OffsetStartMs": 55245,
+          "OffsetEndMs": 55530,
+          "Word": "了"
+        },
+        {
+          "OffsetStartMs": 55530,
+          "OffsetEndMs": 55830,
+          "Word": "出"
+        },
+        {
+          "OffsetStartMs": 55830,
+          "OffsetEndMs": 56445,
+          "Word": "收获"
+        },
+        {
+          "OffsetStartMs": 56445,
+          "OffsetEndMs": 56745,
+          "Word": "且"
+        },
+        {
+          "OffsetStartMs": 56745,
+          "OffsetEndMs": 57030,
+          "Word": "小"
+        },
+        {
+          "OffsetStartMs": 57030,
+          "OffsetEndMs": 57315,
+          "Word": "没"
+        },
+        {
+          "OffsetStartMs": 57315,
+          "OffsetEndMs": 57930,
+          "Word": "一定"
+        },
+        {
+          "OffsetStartMs": 57930,
+          "OffsetEndMs": 58215,
+          "Word": "我"
+        },
+        {
+          "OffsetStartMs": 58215,
+          "OffsetEndMs": 58515,
+          "Word": "你"
+        },
+        {
+          "OffsetStartMs": 58515,
+          "OffsetEndMs": 59150,
+          "Word": "满意"
+        },
+        {
+          "OffsetStartMs": 59920,
+          "OffsetEndMs": 60450,
+          "Word": "女子"
+        }
+      ],
+      "SpeakerId": 0,
+      "EmotionalEnergy": 0,
+      "SilenceTime": 0,
+      "EmotionType": [
+        "disabled"
+      ]
+    },
+    {
+      "FinalSentence": "自叫是傻哥，你做什么不错，臭手如此苦活，那小妹说一说，只得说别是责，小妹想要喝你唱起可作你还喝有妹是的吃的。茶3是一个没多吃幸福错，平时好吃，他说不喜好吃多喝，今天收成不错，见了一套命币准备骗酬杀月不收到一切好说就起说重点说一下最后的结果。两人把事情到上出说茶3如何出发，他每个。",
+      "SliceSentence": "自 叫 是 傻 哥 你做 什么 不错 臭 手 如此 苦活 那 小妹 说一说 只得 说 别是 责 小妹 想要 喝 你 唱起 可作 你 还 喝 有 妹 是的 吃的 茶 3是 一个 没 多吃 幸福 错 平时 好吃 他 说不 喜好 吃 多喝 今天 收成 不错 见 了 一套 命 币 准备 骗 酬 杀 月 不收 到 一切 好说 就 起 说 重点 说 一下 最后 的 结果 两人 把 事情 到 上出 说 茶 3 如何 出发 他 每个",
+      "WrittenText": "",
+      "StartMs": 60480,
+      "EndMs": 120520,
+      "SpeechSpeed": 2.1,
+      "WordsNum": 84,
+      "Words": [
+        {
+          "OffsetStartMs": 0,
+          "OffsetEndMs": 165,
+          "Word": "自"
+        },
+        {
+          "OffsetStartMs": 165,
+          "OffsetEndMs": 405,
+          "Word": "叫"
+        },
+        {
+          "OffsetStartMs": 405,
+          "OffsetEndMs": 690,
+          "Word": "是"
+        },
+        {
+          "OffsetStartMs": 690,
+          "OffsetEndMs": 990,
+          "Word": "傻"
+        },
+        {
+          "OffsetStartMs": 990,
+          "OffsetEndMs": 1340,
+          "Word": "哥"
+        },
+        {
+          "OffsetStartMs": 1840,
+          "OffsetEndMs": 2475,
+          "Word": "你做"
+        },
+        {
+          "OffsetStartMs": 2475,
+          "OffsetEndMs": 3075,
+          "Word": "什么"
+        },
+        {
+          "OffsetStartMs": 3075,
+          "OffsetEndMs": 3740,
+          "Word": "不错"
+        },
+        {
+          "OffsetStartMs": 4210,
+          "OffsetEndMs": 4560,
+          "Word": "臭"
+        },
+        {
+          "OffsetStartMs": 4560,
+          "OffsetEndMs": 4875,
+          "Word": "手"
+        },
+        {
+          "OffsetStartMs": 4875,
+          "OffsetEndMs": 5445,
+          "Word": "如此"
+        },
+        {
+          "OffsetStartMs": 5445,
+          "OffsetEndMs": 6080,
+          "Word": "苦活"
+        },
+        {
+          "OffsetStartMs": 6580,
+          "OffsetEndMs": 6930,
+          "Word": "那"
+        },
+        {
+          "OffsetStartMs": 6930,
+          "OffsetEndMs": 7530,
+          "Word": "小妹"
+        },
+        {
+          "OffsetStartMs": 7530,
+          "OffsetEndMs": 8480,
+          "Word": "说一说"
+        },
+        {
+          "OffsetStartMs": 8950,
+          "OffsetEndMs": 9600,
+          "Word": "只得"
+        },
+        {
+          "OffsetStartMs": 9600,
+          "OffsetEndMs": 9900,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 9900,
+          "OffsetEndMs": 10485,
+          "Word": "别是"
+        },
+        {
+          "OffsetStartMs": 10485,
+          "OffsetEndMs": 10850,
+          "Word": "责"
+        },
+        {
+          "OffsetStartMs": 11350,
+          "OffsetEndMs": 12000,
+          "Word": "小妹"
+        },
+        {
+          "OffsetStartMs": 12000,
+          "OffsetEndMs": 12585,
+          "Word": "想要"
+        },
+        {
+          "OffsetStartMs": 12585,
+          "OffsetEndMs": 12870,
+          "Word": "喝"
+        },
+        {
+          "OffsetStartMs": 12870,
+          "OffsetEndMs": 13170,
+          "Word": "你"
+        },
+        {
+          "OffsetStartMs": 13170,
+          "OffsetEndMs": 13740,
+          "Word": "唱起"
+        },
+        {
+          "OffsetStartMs": 13740,
+          "OffsetEndMs": 14420,
+          "Word": "可作"
+        },
+        {
+          "OffsetStartMs": 14620,
+          "OffsetEndMs": 14970,
+          "Word": "你"
+        },
+        {
+          "OffsetStartMs": 14970,
+          "OffsetEndMs": 15255,
+          "Word": "还"
+        },
+        {
+          "OffsetStartMs": 15255,
+          "OffsetEndMs": 15525,
+          "Word": "喝"
+        },
+        {
+          "OffsetStartMs": 15525,
+          "OffsetEndMs": 15765,
+          "Word": "有"
+        },
+        {
+          "OffsetStartMs": 15765,
+          "OffsetEndMs": 16070,
+          "Word": "妹"
+        },
+        {
+          "OffsetStartMs": 16360,
+          "OffsetEndMs": 16920,
+          "Word": "是的"
+        },
+        {
+          "OffsetStartMs": 16920,
+          "OffsetEndMs": 17690,
+          "Word": "吃的"
+        },
+        {
+          "OffsetStartMs": 18460,
+          "OffsetEndMs": 18810,
+          "Word": "茶"
+        },
+        {
+          "OffsetStartMs": 18810,
+          "OffsetEndMs": 19430,
+          "Word": "3是"
+        },
+        {
+          "OffsetStartMs": 19630,
+          "OffsetEndMs": 20360,
+          "Word": "一个"
+        },
+        {
+          "OffsetStartMs": 20860,
+          "OffsetEndMs": 21210,
+          "Word": "没"
+        },
+        {
+          "OffsetStartMs": 21210,
+          "OffsetEndMs": 21765,
+          "Word": "多吃"
+        },
+        {
+          "OffsetStartMs": 21765,
+          "OffsetEndMs": 22395,
+          "Word": "幸福"
+        },
+        {
+          "OffsetStartMs": 22395,
+          "OffsetEndMs": 22730,
+          "Word": "错"
+        },
+        {
+          "OffsetStartMs": 23200,
+          "OffsetEndMs": 23865,
+          "Word": "平时"
+        },
+        {
+          "OffsetStartMs": 23865,
+          "OffsetEndMs": 24435,
+          "Word": "好吃"
+        },
+        {
+          "OffsetStartMs": 24435,
+          "OffsetEndMs": 24750,
+          "Word": "他"
+        },
+        {
+          "OffsetStartMs": 24750,
+          "OffsetEndMs": 25935,
+          "Word": "说不"
+        },
+        {
+          "OffsetStartMs": 25935,
+          "OffsetEndMs": 26535,
+          "Word": "喜好"
+        },
+        {
+          "OffsetStartMs": 26535,
+          "OffsetEndMs": 26835,
+          "Word": "吃"
+        },
+        {
+          "OffsetStartMs": 26835,
+          "OffsetEndMs": 27470,
+          "Word": "多喝"
+        },
+        {
+          "OffsetStartMs": 27970,
+          "OffsetEndMs": 28605,
+          "Word": "今天"
+        },
+        {
+          "OffsetStartMs": 28605,
+          "OffsetEndMs": 29205,
+          "Word": "收成"
+        },
+        {
+          "OffsetStartMs": 29205,
+          "OffsetEndMs": 29870,
+          "Word": "不错"
+        },
+        {
+          "OffsetStartMs": 30340,
+          "OffsetEndMs": 30690,
+          "Word": "见"
+        },
+        {
+          "OffsetStartMs": 30690,
+          "OffsetEndMs": 30975,
+          "Word": "了"
+        },
+        {
+          "OffsetStartMs": 30975,
+          "OffsetEndMs": 31590,
+          "Word": "一套"
+        },
+        {
+          "OffsetStartMs": 31590,
+          "OffsetEndMs": 31890,
+          "Word": "命"
+        },
+        {
+          "OffsetStartMs": 31890,
+          "OffsetEndMs": 32190,
+          "Word": "币"
+        },
+        {
+          "OffsetStartMs": 32190,
+          "OffsetEndMs": 32775,
+          "Word": "准备"
+        },
+        {
+          "OffsetStartMs": 32775,
+          "OffsetEndMs": 33060,
+          "Word": "骗"
+        },
+        {
+          "OffsetStartMs": 33060,
+          "OffsetEndMs": 33410,
+          "Word": "酬"
+        },
+        {
+          "OffsetStartMs": 33610,
+          "OffsetEndMs": 33975,
+          "Word": "杀"
+        },
+        {
+          "OffsetStartMs": 33975,
+          "OffsetEndMs": 34275,
+          "Word": "月"
+        },
+        {
+          "OffsetStartMs": 34275,
+          "OffsetEndMs": 35060,
+          "Word": "不收"
+        },
+        {
+          "OffsetStartMs": 35110,
+          "OffsetEndMs": 35460,
+          "Word": "到"
+        },
+        {
+          "OffsetStartMs": 35460,
+          "OffsetEndMs": 36045,
+          "Word": "一切"
+        },
+        {
+          "OffsetStartMs": 36045,
+          "OffsetEndMs": 36710,
+          "Word": "好说"
+        },
+        {
+          "OffsetStartMs": 47560,
+          "OffsetEndMs": 47960,
+          "Word": "就"
+        },
+        {
+          "OffsetStartMs": 48160,
+          "OffsetEndMs": 48525,
+          "Word": "起"
+        },
+        {
+          "OffsetStartMs": 48525,
+          "OffsetEndMs": 48890,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 49390,
+          "OffsetEndMs": 50010,
+          "Word": "重点"
+        },
+        {
+          "OffsetStartMs": 50010,
+          "OffsetEndMs": 50295,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 50295,
+          "OffsetEndMs": 50910,
+          "Word": "一下"
+        },
+        {
+          "OffsetStartMs": 50910,
+          "OffsetEndMs": 51495,
+          "Word": "最后"
+        },
+        {
+          "OffsetStartMs": 51495,
+          "OffsetEndMs": 51780,
+          "Word": "的"
+        },
+        {
+          "OffsetStartMs": 51780,
+          "OffsetEndMs": 52460,
+          "Word": "结果"
+        },
+        {
+          "OffsetStartMs": 52630,
+          "OffsetEndMs": 53280,
+          "Word": "两人"
+        },
+        {
+          "OffsetStartMs": 53280,
+          "OffsetEndMs": 53550,
+          "Word": "把"
+        },
+        {
+          "OffsetStartMs": 53550,
+          "OffsetEndMs": 54050,
+          "Word": "事情"
+        },
+        {
+          "OffsetStartMs": 54100,
+          "OffsetEndMs": 54450,
+          "Word": "到"
+        },
+        {
+          "OffsetStartMs": 54450,
+          "OffsetEndMs": 55250,
+          "Word": "上出"
+        },
+        {
+          "OffsetStartMs": 55300,
+          "OffsetEndMs": 55700,
+          "Word": "说"
+        },
+        {
+          "OffsetStartMs": 56500,
+          "OffsetEndMs": 56850,
+          "Word": "茶"
+        },
+        {
+          "OffsetStartMs": 56850,
+          "OffsetEndMs": 57150,
+          "Word": "3"
+        },
+        {
+          "OffsetStartMs": 57150,
+          "OffsetEndMs": 57720,
+          "Word": "如何"
+        },
+        {
+          "OffsetStartMs": 57720,
+          "OffsetEndMs": 58400,
+          "Word": "出发"
+        },
+        {
+          "OffsetStartMs": 58870,
+          "OffsetEndMs": 59270,
+          "Word": "他"
+        },
+        {
+          "OffsetStartMs": 59440,
+          "OffsetEndMs": 60000,
+          "Word": "每个"
+        }
+      ],
+      "SpeakerId": 0,
+      "EmotionalEnergy": 0,
+      "SilenceTime": 0,
+      "EmotionType": [
+        "disabled"
+      ]
+    }
+  ],
+  "ErrorMsg": ""
+}

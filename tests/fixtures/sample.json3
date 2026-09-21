@@ -1,0 +1,4 @@
+{"events":[
+ {"tStartMs":1200,"dDurationMs":2160,"segs":[{"utf8":"第一句"},{"utf8":"字幕","tOffsetMs":500}]},
+ {"tStartMs":3360,"dDurationMs":1640,"segs":[{"utf8":"second line"}]}
+]}
