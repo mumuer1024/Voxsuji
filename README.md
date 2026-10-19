@@ -139,7 +139,7 @@ voxsuji transcript <URL> --refresh          # 忽略已有缓存，重新获取
 voxsuji doctor                              # 检查依赖和配置
 ```
 
-需要机器可读的 stdout 摘要时：
+stdout 始终返回紧凑的 JSON 摘要；加上 `--json` 会额外关闭 stderr 上的进度日志，适合脚本和 Agent：
 
 ```bash
 voxsuji transcript <URL> --json
@@ -328,6 +328,14 @@ transcript-cleanup.md
 这些只是普通文本 Prompt，Voxsuji 不会自动执行它们。
 
 Voxsuji 本身不会调用任何 LLM API，你可以自由选择 ChatGPT、Claude、Gemini、DeepSeek、本地模型或其他工具处理生成的 transcript。
+
+### 人机协作指南（面向非技术用户）
+
+不写代码也可以使用 Voxsuji。如果你更希望让 AI 助手代劳：
+
+- **[人机协作使用指南](docs/HUMAN-AI-GUIDE.md)** — 从安装、配置到日常提示词，面向非技术用户；
+- **[English version](docs/HUMAN-AI-GUIDE.en.md)**；
+- **[配套 Skill](skills/voxsuji-transcript/SKILL.md)** — 复制到 dsh / Claude Code 等 Agent 的 skills 目录，让 Agent 知道何时以及如何调用 Voxsuji。
 
 ---
 
@@ -578,7 +586,7 @@ voxsuji transcript <URL> --refresh
 voxsuji doctor
 ```
 
-Use `--json` when you explicitly want the machine-readable summary on stdout.
+`stdout` always carries the compact JSON summary; `--json` additionally silences progress logs on stderr (useful for scripts and agents).
 
 > Note: the current CLI accepts online video URLs only. It does not (yet) offer local-file input or a separate render subcommand.
 
@@ -715,6 +723,14 @@ transcript-cleanup.md
 ```
 
 They are plain prompt templates only. Voxsuji never calls an LLM API itself.
+
+### Human–AI collaboration guide
+
+You don't need to be technical to use Voxsuji. If you would rather have an AI assistant do the work:
+
+- **[Human–AI collaboration guide](docs/HUMAN-AI-GUIDE.en.md)** — installation, configuration, and copy-paste prompts for non-technical users;
+- **[中文版](docs/HUMAN-AI-GUIDE.md)**;
+- **[Companion skill](skills/voxsuji-transcript/SKILL.md)** — copy it into your agent's skills directory (dsh, Claude Code, …) so the agent knows when and how to call Voxsuji.
 
 ---
 

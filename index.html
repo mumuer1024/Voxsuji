@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voxsuji — 把在线视频变成结构化、可缓存的文字稿</title>
+<meta name="description" content="Voxsuji 是一个把在线视频 URL 变成完整文字稿的小型 CLI 工具：优先使用现成字幕，没有字幕时自动调用云端 ASR，输出 JSON / Markdown / SRT。">
+<meta name="theme-color" content="#070b15">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Voxsuji — Turn a video URL into structured, cacheable text">
+<meta property="og:description" content="Subtitle-first CLI transcripts. Cloud ASR fallback. JSON / Markdown / SRT output.">
+<meta property="og:url" content="https://mumuer1024.github.io/Voxsuji/">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23070b15'/%3E%3Cg fill='%2322d3ee'%3E%3Crect x='5' y='14' width='3' height='10' rx='1.5'/%3E%3Crect x='11' y='9' width='3' height='18' rx='1.5'/%3E%3Crect x='17' y='13' width='3' height='12' rx='1.5'/%3E%3Crect x='23' y='7' width='3' height='22' rx='1.5' fill='%23a78bfa'/%3E%3C/g%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#070b15; --bg-2:#0b1120; --panel:rgba(148,163,184,.06); --panel-2:rgba(148,163,184,.03);
+  --line:rgba(148,163,184,.16); --text:#e2e8f0; --muted:#94a3b8;
+  --cyan:#22d3ee; --violet:#a78bfa; --green:#34d399; --amber:#fbbf24; --red:#f87171;
+  --grad:linear-gradient(120deg,#22d3ee 0%,#a78bfa 60%,#f0abfc 100%);
+  --radius:16px; --mono:ui-monospace,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif;
+  line-height:1.7; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+a{color:var(--cyan); text-decoration:none}
+a:hover{text-decoration:underline}
+code,kbd,.mono{font-family:var(--mono)}
+::selection{background:rgba(34,211,238,.25)}
+
+/* ---------- background canvas ---------- */
+#bgCanvas{position:fixed; inset:0; z-index:-1; pointer-events:none}
+
+/* ---------- layout helpers ---------- */
+.wrap{max-width:1080px; margin:0 auto; padding:0 22px}
+section{padding:84px 0}
+.sec-head{text-align:center; margin-bottom:44px}
+.sec-head h2{font-size:clamp(26px,4vw,36px); margin:0 0 10px; letter-spacing:.5px}
+.sec-head .sub{color:var(--muted); max-width:640px; margin:0 auto; font-size:16px}
+.kicker{
+  display:inline-block; font-size:12px; letter-spacing:2.5px; text-transform:uppercase;
+  color:var(--cyan); margin-bottom:14px; font-weight:600;
+}
+
+/* ---------- reveal on scroll ---------- */
+.reveal{opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1)}
+.reveal.in{opacity:1; transform:none}
+
+/* ---------- nav ---------- */
+nav{
+  position:sticky; top:0; z-index:50; backdrop-filter:blur(14px);
+  background:rgba(7,11,21,.72); border-bottom:1px solid var(--line);
+}
+nav .wrap{display:flex; align-items:center; gap:22px; height:60px}
+.logo{display:flex; align-items:center; gap:10px; font-weight:700; font-size:18px; color:var(--text)}
+.logo svg{flex:none}
+.nav-links{display:flex; gap:18px; margin-left:auto; font-size:14px; color:var(--muted)}
+.nav-links a{color:var(--muted)}
+.nav-links a:hover{color:var(--text); text-decoration:none}
+.nav-actions{display:flex; align-items:center; gap:10px}
+.lang-btn{
+  background:var(--panel); border:1px solid var(--line); color:var(--text); cursor:pointer;
+  border-radius:999px; padding:6px 14px; font-size:13px; font-weight:600; transition:.2s;
+}
+.lang-btn:hover{border-color:var(--cyan); color:var(--cyan)}
+.gh-btn{
+  display:inline-flex; align-items:center; gap:7px; background:var(--grad);
+  color:#06121c; font-weight:700; font-size:13.5px; padding:8px 16px; border-radius:999px; transition:.25s;
+}
+.gh-btn:hover{transform:translateY(-1px); box-shadow:0 8px 24px rgba(34,211,238,.35); text-decoration:none}
+
+/* ---------- hero ---------- */
+#hero{position:relative; padding:110px 0 70px; overflow:hidden}
+.aurora{position:absolute; inset:0; pointer-events:none; z-index:0}
+.aurora i{
+  position:absolute; border-radius:50%; filter:blur(90px); opacity:.5;
+  animation:drift 16s ease-in-out infinite alternate;
+}
+.aurora i:nth-child(1){width:520px; height:520px; left:-120px; top:-140px; background:radial-gradient(circle,#155e75,transparent 65%)}
+.aurora i:nth-child(2){width:460px; height:460px; right:-100px; top:-60px; background:radial-gradient(circle,#4c1d95,transparent 65%); animation-delay:-5s}
+.aurora i:nth-child(3){width:420px; height:420px; left:38%; bottom:-220px; background:radial-gradient(circle,#164e63,transparent 65%); animation-delay:-9s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(40px,30px) scale(1.12)}}
+.hero-inner{position:relative; z-index:1; text-align:center; max-width:860px; margin:0 auto}
+.hero-pill{
+  display:inline-flex; align-items:center; gap:8px; font-size:13px; color:var(--muted);
+  border:1px solid var(--line); background:var(--panel); padding:7px 16px; border-radius:999px; margin-bottom:26px;
+}
+.hero-pill .dot{width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 10px var(--green); animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-inner h1{
+  margin:0 0 8px; font-size:clamp(46px,9vw,84px); font-weight:800; letter-spacing:-1px; line-height:1.05;
+  background:var(--grad); -webkit-background-clip:text; background-clip:text; color:transparent;
+  animation:fadeUp .9s .1s both;
+}
+.eq{display:inline-flex; align-items:flex-end; gap:3px; height:14px; margin:0 0 2px 8px; vertical-align:middle}
+.eq i{width:4px; border-radius:2px; background:var(--grad); animation:bounce 1s ease-in-out infinite}
+.eq i:nth-child(1){height:6px}.eq i:nth-child(2){height:12px; animation-delay:.12s}
+.eq i:nth-child(3){height:8px; animation-delay:.24s}.eq i:nth-child(4){height:14px; animation-delay:.36s}
+.eq i:nth-child(5){height:9px; animation-delay:.48s}
+@keyframes bounce{0%,100%{transform:scaleY(.5)}50%{transform:scaleY(1)}}
+.tagline{font-size:clamp(17px,2.6vw,22px); color:#cbd5e1; margin:6px 0 6px; animation:fadeUp .9s .25s both}
+.tagline .hl{color:var(--cyan); font-weight:600}
+.tagline .hl2{color:var(--violet); font-weight:600}
+.hero-desc{color:var(--muted); font-size:15.5px; max-width:620px; margin:12px auto 30px; animation:fadeUp .9s .35s both}
+@keyframes fadeUp{from{opacity:0; transform:translateY(22px)}to{opacity:1; transform:none}}
+
+/* hero terminal */
+.term{
+  text-align:left; background:#0a0f1e; border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:0 24px 60px rgba(0,0,0,.45); max-width:620px; margin:0 auto 34px; overflow:hidden;
+  animation:fadeUp .9s .45s both;
+}
+.term-head{display:flex; align-items:center; gap:7px; padding:12px 16px; border-bottom:1px solid var(--line); background:rgba(148,163,184,.04)}
+.term-head i{width:11px; height:11px; border-radius:50%}
+.term-head i:nth-child(1){background:#f87171}.term-head i:nth-child(2){background:#fbbf24}.term-head i:nth-child(3){background:#34d399}
+.term-head span{margin-left:8px; font-size:12px; color:var(--muted); font-family:var(--mono)}
+.term-body{padding:18px 20px 20px; font-family:var(--mono); font-size:14px}
+.tl{display:block; min-height:1.5em; white-space:pre-wrap; word-break:break-all}
+.tl .pr{color:var(--green); font-weight:600}
+.tl .cm{color:#cbd5e1}
+.tl .co{color:#64748b}
+.tl .ok{color:var(--green)}
+.tl .warn{color:var(--amber)}
+.cursor{display:inline-block; width:9px; height:1.15em; margin-left:2px; vertical-align:text-bottom; background:var(--cyan); animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.term-out{opacity:0; animation:fadeUp .5s forwards}
+.term-out.d1{animation-delay:2.1s}
+.term-out.d2{animation-delay:2.7s}
+
+/* hero badges */
+.badges{display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-bottom:36px; animation:fadeUp .9s .6s both}
+.badges img{height:22px; border-radius:4px}
+.cta{display:flex; justify-content:center; gap:14px; flex-wrap:wrap; animation:fadeUp .9s .7s both}
+.btn{
+  display:inline-flex; align-items:center; gap:8px; padding:12px 26px; border-radius:999px; font-weight:700; font-size:15px; transition:.25s;
+}
+.btn-primary{background:var(--grad); color:#06121c}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 12px 32px rgba(34,211,238,.4); text-decoration:none}
+.btn-ghost{border:1px solid var(--line); color:var(--text); background:var(--panel)}
+.btn-ghost:hover{border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px); text-decoration:none}
+.hero-stats{
+  display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin-top:56px;
+  animation:fadeUp .9s .85s both;
+}
+.stat{
+  border:1px solid var(--line); background:var(--panel-2); border-radius:12px; padding:12px 18px;
+  font-size:13px; color:var(--muted); min-width:130px;
+}
+.stat b{display:block; font-size:17px; color:var(--text); margin-bottom:2px}
+
+/* ---------- pipeline ---------- */
+.pipe{max-width:760px; margin:0 auto}
+.node{
+  position:relative; z-index:1; display:flex; gap:18px; align-items:flex-start;
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:18px 20px; margin:0 0 18px; transition:border-color .25s, transform .25s;
+}
+.node:not(:last-child)::after{
+  content:""; position:absolute; left:34px; top:calc(100% + 1px); width:2px; height:18px;
+  background:linear-gradient(to bottom,rgba(34,211,238,.75),rgba(167,139,250,.75));
+  border-radius:1px; pointer-events:none;
+}
+.node:hover{border-color:var(--cyan); transform:translateX(4px)}
+.node .ic{
+  flex:none; width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center;
+  font-size:20px; border:1px solid rgba(34,211,238,.35);
+  background:linear-gradient(160deg,rgba(34,211,238,.16),rgba(34,211,238,.02)),#0b1322;
+}
+.node h3{margin:0 0 4px; font-size:15.5px}
+.node p{margin:0; color:var(--muted); font-size:13.5px}
+.node.alt .ic{
+  border-color:rgba(167,139,250,.4);
+  background:linear-gradient(160deg,rgba(167,139,250,.18),rgba(167,139,250,.02)),#0e0c1d;
+}
+.branch{display:flex; gap:12px; margin-top:12px}
+.branch .half{
+  flex:1; border-radius:12px; padding:12px 14px; font-size:13px; border:1px dashed var(--line); background:rgba(148,163,184,.03);
+}
+.branch .half.yes{border-color:rgba(52,211,153,.35)}
+.branch .half.no{border-color:rgba(251,191,36,.35)}
+.branch .half b{display:block; margin-bottom:4px}
+.branch .half.yes b{color:var(--green)}
+.branch .half.no b{color:var(--amber)}
+.branch .half p{margin:0; color:var(--muted); font-size:12.5px; line-height:1.55}
+
+/* ---------- features ---------- */
+.grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(300px,1fr)); gap:18px}
+.card{
+  position:relative; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius);
+  padding:26px 24px; overflow:hidden; transition:border-color .25s, transform .25s, box-shadow .25s;
+}
+.card::before{
+  content:""; position:absolute; inset:0 0 auto 0; height:3px;
+  background:var(--grad); opacity:0; transition:opacity .3s;
+}
+.card:hover{transform:translateY(-4px); border-color:rgba(34,211,238,.5); box-shadow:0 18px 44px rgba(0,0,0,.4)}
+.card:hover::before{opacity:1}
+.card .ic{font-size:26px; margin-bottom:14px; display:inline-block}
+.card h3{margin:0 0 8px; font-size:17px}
+.card p{margin:0; color:var(--muted); font-size:14px}
+.card .tag{display:inline-block; margin-top:12px; font-size:11.5px; letter-spacing:1px; color:var(--cyan); font-weight:600}
+
+/* ---------- quickstart ---------- */
+.quick-grid{display:grid; grid-template-columns:1.25fr .9fr; gap:22px; align-items:start}
+.term-big{background:#0a0f1e; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; box-shadow:0 24px 60px rgba(0,0,0,.4)}
+.term-big .term-body{font-size:13.5px; line-height:1.9}
+.term-big .tl{opacity:0; animation:fadeUp .5s forwards}
+.term-big .tl:nth-child(1){animation-delay:.1s}
+.term-big .tl:nth-child(2){animation-delay:.5s}
+.term-big .tl:nth-child(3){animation-delay:.9s}
+.term-big .tl:nth-child(4){animation-delay:1.4s}
+.term-big .tl:nth-child(5){animation-delay:1.9s}
+.term-big .tl:nth-child(6){animation-delay:2.4s}
+.term-big .tl:nth-child(7){animation-delay:3s}
+.term-big .tl:nth-child(8){animation-delay:3.5s}
+.side-cards{display:flex; flex-direction:column; gap:14px}
+.mini{
+  background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:18px 20px;
+}
+.mini h4{margin:0 0 10px; font-size:15px; display:flex; align-items:center; gap:8px}
+.mini ul{margin:0; padding-left:2px; list-style:none}
+.mini li{font-family:var(--mono); font-size:12.8px; color:#cbd5e1; padding:5px 0; border-bottom:1px dashed rgba(148,163,184,.1)}
+.mini li:last-child{border-bottom:none}
+.mini li .fl{color:var(--green)}
+.mini li .op{color:var(--amber)}
+.mini p{margin:10px 0 0; font-size:12.5px; color:var(--muted)}
+
+/* ---------- outputs ---------- */
+.out-grid{display:grid; grid-template-columns:1fr 1.1fr; gap:22px; align-items:start}
+.codebox{
+  background:#0a0f1e; border:1px solid var(--line); border-radius:var(--radius); overflow:hidden;
+  box-shadow:0 24px 60px rgba(0,0,0,.4); position:relative;
+}
+.codebox .cb-head{
+  display:flex; align-items:center; gap:10px; padding:11px 16px; border-bottom:1px solid var(--line);
+  background:rgba(148,163,184,.04); font-family:var(--mono); font-size:12.5px; color:var(--muted);
+}
+.codebox .cb-head .fname{color:var(--cyan)}
+.copy-btn{
+  margin-left:auto; background:var(--panel); border:1px solid var(--line); color:var(--muted);
+  font-size:12px; padding:3px 12px; border-radius:6px; cursor:pointer; font-family:var(--mono); transition:.2s;
+}
+.copy-btn:hover{color:var(--cyan); border-color:var(--cyan)}
+.codebox pre{margin:0; padding:18px 20px; overflow-x:auto; font-family:var(--mono); font-size:13px; line-height:1.75; color:#cbd5e1}
+.codebox pre .k{color:var(--violet)}
+.codebox pre .s{color:var(--green)}
+.codebox pre .n{color:var(--amber)}
+.codebox pre .c{color:#64748b}
+
+/* ---------- agent ---------- */
+.agent-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px; align-items:center}
+.steps{counter-reset:step}
+.steps .step{display:flex; gap:14px; align-items:center; padding:10px 0; border-bottom:1px dashed rgba(148,163,184,.12)}
+.steps .step:last-child{border-bottom:none}
+.steps .step::before{
+  counter-increment:step; content:counter(step);
+  flex:none; width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:13px; font-weight:700; color:var(--cyan);
+  border:1px solid rgba(34,211,238,.4); background:rgba(34,211,238,.08);
+}
+.steps .step span{font-size:14px; color:#cbd5e1}
+.steps .step code{font-size:12.5px; color:var(--green)}
+
+/* ---------- stack ---------- */
+.chips{display:flex; flex-wrap:wrap; justify-content:center; gap:10px}
+.chip{
+  border:1px solid var(--line); background:var(--panel); border-radius:999px; padding:8px 18px;
+  font-size:13.5px; color:#cbd5e1; transition:.2s;
+}
+.chip:hover{border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px)}
+
+/* ---------- footer ---------- */
+footer{border-top:1px solid var(--line); padding:44px 0 40px; text-align:center; color:var(--muted); font-size:13.5px}
+footer .flinks{display:flex; justify-content:center; gap:20px; margin-bottom:14px; flex-wrap:wrap}
+footer a{color:var(--muted)}
+footer a:hover{color:var(--cyan)}
+footer .license{margin-top:10px; font-size:12.5px}
+
+/* ---------- responsive ---------- */
+@media (max-width:860px){
+  .nav-links{display:none}
+  .quick-grid,.out-grid,.agent-grid{grid-template-columns:1fr}
+  section{padding:64px 0}
+  .branch{flex-direction:column}
+}
+@media (max-width:480px){
+  .wrap{padding:0 16px}
+  .hero-stats{flex-direction:column; align-items:center}
+  .stat{width:200px}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
+  .reveal{opacity:1; transform:none}
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas" aria-hidden="true"></canvas>
+
+<nav>
+  <div class="wrap">
+    <a class="logo" href="#hero" aria-label="Voxsuji">
+      <svg width="26" height="26" viewBox="0 0 32 32" aria-hidden="true"><g fill="#22d3ee"><rect x="5" y="14" width="3" height="10" rx="1.5"/><rect x="11" y="9" width="3" height="18" rx="1.5"/><rect x="17" y="13" width="3" height="12" rx="1.5"/><rect x="23" y="7" width="3" height="22" rx="1.5" fill="#a78bfa"/></g></svg>
+      Voxsuji
+    </a>
+    <div class="nav-links">
+      <a href="#pipeline" data-i18n="nav.pipeline">处理流程</a>
+      <a href="#features" data-i18n="nav.features">特性</a>
+      <a href="#quickstart" data-i18n="nav.install">快速开始</a>
+      <a href="#outputs" data-i18n="nav.outputs">输出</a>
+      <a href="#agent" data-i18n="nav.agent">Agent 工作流</a>
+      <a href="#guide" data-i18n="nav.guide">使用指南</a>
+    </div>
+    <div class="nav-actions">
+      <button class="lang-btn" id="langToggle" type="button" aria-label="Switch language">EN</button>
+      <a class="gh-btn" href="https://github.com/mumuer1024/Voxsuji" target="_blank" rel="noopener">
+        <svg width="15" height="15" viewBox="0 0 16 16" aria-hidden="true" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+    </div>
+  </div>
+</nav>
+
+<header id="hero">
+  <div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+  <div class="wrap hero-inner">
+    <span class="hero-pill"><span class="dot"></span><span data-i18n="hero.pill">CLI 工具 · Python · yt-dlp 驱动</span></span>
+    <h1>Voxsuji<span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span></h1>
+    <p class="tagline" data-i18n="hero.tagline">把在线视频变成<span class="hl">结构化、可缓存</span>的文字稿</p>
+    <p class="hero-desc" data-i18n="hero.desc">Voxsuji 是一个小型 CLI：给定一个视频 URL，优先使用现成字幕；没有字幕时自动提取音频并调用你配置的云端 ASR。输出 JSON、Markdown 和 SRT，既适合直接阅读，也适合交给 AI Agent 继续处理。</p>
+
+    <div class="term" role="img" aria-label="Voxsuji 命令行演示">
+      <div class="term-head"><i></i><i></i><i></i><span>voxsuji — zsh</span></div>
+      <div class="term-body">
+        <span class="tl"><span class="pr">$</span> <span class="cm" id="heroCmd"></span><span class="cursor" aria-hidden="true"></span></span>
+        <span class="tl term-out d1"><span class="ok">✓</span> <span class="co" data-i18n="hero.out1">发现可用字幕，跳过 ASR</span></span>
+        <span class="tl term-out d2"><span class="ok">✓</span> <span class="co" data-i18n="hero.out2">文字稿已生成 · 19 段 · 1632 字符</span></span>
+      </div>
+    </div>
+
+    <div class="badges" id="badges">
+      <img alt="GitHub stars" src="https://img.shields.io/github/stars/mumuer1024/Voxsuji?style=flat&label=Stars&labelColor=1e293b&color=22d3ee">
+      <img alt="GitHub forks" src="https://img.shields.io/github/forks/mumuer1024/Voxsuji?style=flat&label=Forks&labelColor=1e293b&color=38bdf8">
+      <img alt="License MIT" src="https://img.shields.io/github/license/mumuer1024/Voxsuji?style=flat&label=License&labelColor=1e293b&color=a78bfa">
+      <img alt="Python 3.10+" src="https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&labelColor=1e293b">
+      <img alt="Powered by yt-dlp" src="https://img.shields.io/badge/powered%20by-yt--dlp-8b5cf6?style=flat&labelColor=1e293b">
+    </div>
+
+    <div class="cta">
+      <a class="btn btn-primary" href="#quickstart" data-i18n="cta.start">快速开始</a>
+      <a class="btn btn-ghost" href="https://github.com/mumuer1024/Voxsuji" target="_blank" rel="noopener" data-i18n="cta.repo">在 GitHub 上查看</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><b data-i18n="stat.sub">字幕优先</b><span data-i18n="stat.sub2">有字幕就不花钱调 ASR</span></div>
+      <div class="stat"><b>3</b><span data-i18n="stat.prov">云端 ASR Provider</span></div>
+      <div class="stat"><b>3</b><span data-i18n="stat.fmt">输出格式 · JSON / MD / SRT</span></div>
+      <div class="stat"><b data-i18n="stat.llm">LLM 中立</b><span data-i18n="stat.llm2">总结交给任意 AI</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- ================= Pipeline ================= -->
+  <section id="pipeline">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker" data-i18n="pipe.kicker">HOW IT WORKS</span>
+        <h2 data-i18n="pipe.title">一个 URL，三段输出</h2>
+        <p class="sub" data-i18n="pipe.sub">Voxsuji 处理视频的核心流程：字幕优先，ASR 兜底，结果统一格式化。</p>
+      </div>
+
+      <div class="pipe reveal">
+        <div class="node">
+          <div class="ic">🔗</div>
+          <div>
+            <h3 data-i18n="pipe.n1t">视频 URL</h3>
+            <p data-i18n="pipe.n1d">`voxsuji transcript &lt;URL&gt;` — 只需一条命令。</p>
+          </div>
+        </div>
+        <div class="node alt">
+          <div class="ic">📼</div>
+          <div>
+            <h3 data-i18n="pipe.n2t">yt-dlp 获取视频信息与字幕</h3>
+            <p data-i18n="pipe.n2d">提取能力来自 yt-dlp；YouTube 是主要验证来源，其他支持的网站按 best-effort 工作。</p>
+          </div>
+        </div>
+        <div class="node">
+          <div class="ic">💬</div>
+          <div>
+            <h3 data-i18n="pipe.n3t">发现可用字幕？</h3>
+            <div class="branch">
+              <div class="half yes">
+                <b>✅ <span data-i18n="pipe.b1t">有字幕 → 直接解析</span></b>
+                <p data-i18n="pipe.b1d">不产生 ASR 调用，零额外成本，通常也是最快的路径。</p>
+              </div>
+              <div class="half no">
+                <b>🎙️ <span data-i18n="pipe.b2t">无字幕 → ASR fallback</span></b>
+                <p data-i18n="pipe.b2d">提取音频 → 临时上传 S3-compatible 对象存储 → 调用云端 ASR（阿里云百炼 / 火山引擎 / 腾讯云）。临时对象在转录完成后自动清理。</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="node alt">
+          <div class="ic">⚙️</div>
+          <div>
+            <h3 data-i18n="pipe.n4t">统一格式化</h3>
+            <p data-i18n="pipe.n4d">字幕或 ASR 结果归一化为同一份结构化 transcript，是后续所有输出的唯一数据源。</p>
+          </div>
+        </div>
+        <div class="node">
+          <div class="ic">📄</div>
+          <div>
+            <h3 data-i18n="pipe.n5t">输出 JSON / Markdown / SRT</h3>
+            <p data-i18n="pipe.n5d">同一份 transcript 生成三种格式：JSON 权威、Markdown 易读、SRT 可当字幕文件。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Features ================= -->
+  <section id="features">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker" data-i18n="feat.kicker">FEATURES</span>
+        <h2 data-i18n="feat.title">设计原则</h2>
+        <p class="sub" data-i18n="feat.sub">Voxsuji 只负责把视频可靠地变成文字，其余交给你的工具链。</p>
+      </div>
+
+      <div class="grid">
+        <div class="card reveal"><span class="ic">💡</span>
+          <h3 data-i18n="feat.t1">字幕优先</h3>
+          <p data-i18n="feat.d1">平台已有可用字幕时直接使用，不产生 ASR 调用。不要为了免费的东西付费。</p>
+          <span class="tag" data-i18n="feat.k1">SUBTITLES FIRST</span>
+        </div>
+        <div class="card reveal"><span class="ic">🎙️</span>
+          <h3 data-i18n="feat.t2">云端 ASR 兜底</h3>
+          <p data-i18n="feat.d2">没有字幕时自动提取音频，调用你配置的阿里云百炼、火山引擎或腾讯云。</p>
+          <span class="tag" data-i18n="feat.k2">3 PROVIDERS</span>
+        </div>
+        <div class="card reveal"><span class="ic">💾</span>
+          <h3 data-i18n="feat.t3">本地缓存</h3>
+          <p data-i18n="feat.d3">处理过的视频保存在 cache/&lt;platform&gt;/&lt;video_id&gt;/，再次运行直接复用；--refresh 强制重取。</p>
+          <span class="tag" data-i18n="feat.k3">CACHEABLE</span>
+        </div>
+        <div class="card reveal"><span class="ic">📦</span>
+          <h3 data-i18n="feat.t4">结构化输出</h3>
+          <p data-i18n="feat.d4">一份标准化 transcript 同时产出 JSON、Markdown 和 SRT，人和程序都好用。</p>
+          <span class="tag" data-i18n="feat.k4">JSON · MD · SRT</span>
+        </div>
+        <div class="card reveal"><span class="ic">🤖</span>
+          <h3 data-i18n="feat.t5">Agent 友好</h3>
+          <p data-i18n="feat.d5">stdout 只返回紧凑 JSON 摘要，不会把几小时的文字稿灌进 Agent 的上下文。</p>
+          <span class="tag" data-i18n="feat.k5">AGENT-FIRST</span>
+        </div>
+        <div class="card reveal"><span class="ic">🔓</span>
+          <h3 data-i18n="feat.t6">不绑定厂商</h3>
+          <p data-i18n="feat.d6">任意 S3-compatible 对象存储即可；三家 ASR 相互独立，只配你实际使用的一家。</p>
+          <span class="tag" data-i18n="feat.k6">NO LOCK-IN</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Quick start ================= -->
+  <section id="quickstart">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker" data-i18n="qs.kicker">QUICK START</span>
+        <h2 data-i18n="qs.title">快速开始</h2>
+        <p class="sub" data-i18n="qs.sub">Python 3.10+ 和 ffmpeg 即可。yt-dlp 会自动装进项目自己的虚拟环境，不碰系统 Python。</p>
+      </div>
+
+      <div class="quick-grid">
+        <div class="term-big reveal">
+          <div class="term-head"><i></i><i></i><i></i><span>bash</span></div>
+          <div class="term-body">
+            <span class="tl"><span class="pr">$</span> <span class="cm">git clone https://github.com/mumuer1024/Voxsuji.git <span class="co" data-i18n="qs.c1"># 克隆仓库</span></span></span>
+            <span class="tl"><span class="pr">$</span> <span class="cm">cd voxsuji && sudo apt-get install -y ffmpeg</span></span>
+            <span class="tl"><span class="pr">$</span> <span class="cm">cp .env.example .env && chmod 600 .env && cp config.example.ini config.ini</span></span>
+            <span class="tl"><span class="pr">$</span> <span class="cm">./bin/voxsuji doctor <span class="co" data-i18n="qs.c2"># 检查依赖与配置</span></span></span>
+            <span class="tl"><span class="ok">✔ ffmpeg found · provider: aliyun · storage reachable</span></span>
+            <span class="tl"><span class="pr">$</span> <span class="cm">voxsuji transcript &lt;URL&gt; <span class="co" data-i18n="qs.c3"># 字幕优先，无字幕时自动 ASR</span></span></span>
+            <span class="tl"><span class="ok">✓ cache/youtube/&lt;video_id&gt;/transcript.md</span></span>
+            <span class="tl"><span class="warn" data-i18n="qs.c4">ℹ stdout 只返回 JSON 摘要，不会刷屏整个文字稿</span></span>
+          </div>
+        </div>
+
+        <div class="side-cards reveal">
+          <div class="mini">
+            <h4 data-i18n="qs.cmds">📌 常用命令</h4>
+            <ul>
+              <li><span class="op">voxsuji</span> <span class="fl">transcript</span> &lt;URL&gt;</li>
+              <li><span class="op">voxsuji</span> <span class="fl">transcript</span> &lt;URL&gt; <span class="op">--provider</span> aliyun</li>
+              <li><span class="op">voxsuji</span> <span class="fl">transcript</span> &lt;URL&gt; <span class="op">--language</span> zh</li>
+              <li><span class="op">voxsuji</span> <span class="fl">transcript</span> &lt;URL&gt; <span class="op">--force-asr</span> <span class="op">--refresh</span></li>
+              <li><span class="op">voxsuji</span> <span class="fl">doctor</span></li>
+            </ul>
+            <p data-i18n="qs.note">--force-asr 会跳过原本免费的字幕路径并产生 ASR 费用，非必要不要用。</p>
+          </div>
+          <div class="mini">
+            <h4 data-i18n="qs.agent">🤖 直接交给 Agent</h4>
+            <p data-i18n="qs.agent2">在 Claude Code、Codex、Cursor 等工具里运行 voxsuji，读取生成的 transcript.md 再总结即可——Voxsuji 本身不调用任何 LLM。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Outputs ================= -->
+  <section id="outputs">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker" data-i18n="out.kicker">OUTPUTS</span>
+        <h2 data-i18n="out.title">输出什么</h2>
+        <p class="sub" data-i18n="out.sub">默认缓存结构，以及成功时 stdout 的 JSON 契约。</p>
+      </div>
+
+      <div class="out-grid">
+        <div class="codebox reveal">
+          <div class="cb-head"><span>📁</span><span class="fname">cache/</span><span data-i18n="out.tree">· 缓存目录结构</span></div>
+          <pre><span class="c">cache/&lt;platform&gt;/&lt;video_id&gt;/</span>
+├── transcript.json   <span class="c"># 标准化结构 · 权威数据源</span>
+├── transcript.md     <span class="c"># 适合直接阅读 / 交给 AI</span>
+├── transcript.srt    <span class="c"># 字幕格式</span>
+├── meta.json         <span class="c"># 标题 · 上传者 · 时长</span>
+└── raw/
+    └── asr_&lt;provider&gt;.json  <span class="c"># ASR 原始响应（调试用）</span></pre>
+        </div>
+
+        <div class="codebox reveal">
+          <div class="cb-head"><span>🧾</span><span class="fname" data-i18n="out.json">stdout · JSON 契约</span>
+            <button class="copy-btn" id="copyJson" type="button" data-i18n="out.copy">复制</button>
+          </div>
+          <pre id="jsonSample">{
+  <span class="k">"ok"</span>: <span class="n">true</span>,
+  <span class="k">"cached"</span>: <span class="n">false</span>,
+  <span class="k">"source_url"</span>: <span class="s">"https://www.youtube.com/watch?v=..."</span>,
+  <span class="k">"platform"</span>: <span class="s">"youtube"</span>,
+  <span class="k">"video_id"</span>: <span class="s">"..."</span>,
+  <span class="k">"title"</span>: <span class="s">"..."</span>,
+  <span class="k">"duration"</span>: <span class="n">212.3</span>,
+  <span class="k">"transcript_source"</span>: <span class="s">"subtitle"</span>,
+  <span class="k">"segment_count"</span>: <span class="n">19</span>,
+  <span class="k">"char_count"</span>: <span class="n">1632</span>,
+  <span class="k">"files"</span>: {
+    <span class="k">"json"</span>: <span class="s">"..."</span>,
+    <span class="k">"markdown"</span>: <span class="s">"..."</span>,
+    <span class="k">"srt"</span>: <span class="s">"..."</span>
+  }
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Agent workflow ================= -->
+  <section id="agent">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker" data-i18n="ag.kicker">AI AGENT</span>
+        <h2 data-i18n="ag.title">和 AI Agent 一起使用</h2>
+        <p class="sub" data-i18n="ag.sub">Voxsuji 有意不把完整文字稿输出到 stdout——几小时的视频不会突然塞满 Agent 的上下文。</p>
+      </div>
+
+      <div class="agent-grid">
+        <div class="steps reveal">
+          <div class="step"><span data-i18n="ag.s1">用户给出视频 URL</span></div>
+          <div class="step"><span data-i18n="ag.s2">Agent 运行 </span><code>voxsuji transcript &lt;URL&gt;</code></div>
+          <div class="step"><span data-i18n="ag.s3">读取 stdout 的 JSON summary</span></div>
+          <div class="step"><span data-i18n="ag.s4">找到 </span><code>files.markdown</code></div>
+          <div class="step"><span data-i18n="ag.s5">增量读取 transcript.md（长文字稿分段读）</span></div>
+          <div class="step"><span data-i18n="ag.s6">总结 / 整理 / 分析，按你的需求输出</span></div>
+        </div>
+
+        <div class="codebox reveal">
+          <div class="cb-head"><span>💬</span><span class="fname" data-i18n="ag.prompt">可以直接对 Agent 说的话</span></div>
+          <pre data-i18n="ag.promptBody">“用 voxsuji 获取这个视频的完整文字稿：优先使用平台现有字幕，必要时使用已配置的 ASR。
+完成后读取生成的 Markdown 文字稿，并为我总结主要内容。不要修改 voxsuji 项目本身。”<span class="c">
+prompts/ 目录另提供 full-summary / structured-notes / lecture-notes / transcript-cleanup 模板</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Guide ================= -->
+  <section id="guide">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker" data-i18n="guide.kicker">DOCS</span>
+        <h2 data-i18n="guide.title">人机协作指南</h2>
+        <p class="sub" data-i18n="guide.sub">不写代码也能用。把这项工作交给 AI，或者把配套 Skill 装进你的 Agent。</p>
+      </div>
+
+      <div class="grid">
+        <a class="card reveal" style="display:block;text-decoration:none;color:inherit" href="https://github.com/mumuer1024/Voxsuji/blob/master/docs/HUMAN-AI-GUIDE.md" target="_blank" rel="noopener">
+          <span class="ic">👩‍💻</span>
+          <h3 data-i18n="guide.t1">给人：人机协作使用指南</h3>
+          <p data-i18n="guide.d1">从安装、配置到日常提示词，面向非技术用户。中文版 / English version。</p>
+          <span class="tag" data-i18n="guide.k1">阅读指南 →</span>
+        </a>
+        <a class="card reveal" style="display:block;text-decoration:none;color:inherit" href="https://github.com/mumuer1024/Voxsuji/blob/master/skills/voxsuji-transcript/SKILL.md" target="_blank" rel="noopener">
+          <span class="ic">🤖</span>
+          <h3 data-i18n="guide.t2">给 Agent：配套 Skill</h3>
+          <p data-i18n="guide.d2">复制到 dsh / Claude Code 的 skills 目录，让 Agent 知道何时、如何调用 Voxsuji。</p>
+          <span class="tag" data-i18n="guide.k2">安装 Skill →</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= Stack ================= -->
+  <section id="stack">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="kicker" data-i18n="stack.kicker">STACK</span>
+        <h2 data-i18n="stack.title">技术栈</h2>
+      </div>
+      <div class="chips reveal">
+        <span class="chip">Python 3.10+</span>
+        <span class="chip">yt-dlp</span>
+        <span class="chip">ffmpeg / ffprobe</span>
+        <span class="chip">阿里云百炼 · aliyun</span>
+        <span class="chip">火山引擎 · volcengine</span>
+        <span class="chip">腾讯云 · tencent</span>
+        <span class="chip">S3-compatible 对象存储</span>
+        <span class="chip">unittest · 完全离线测试</span>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="flinks">
+      <a href="https://github.com/mumuer1024/Voxsuji" target="_blank" rel="noopener" data-i18n="foot.repo">GitHub 仓库</a>
+      <a href="https://github.com/mumuer1024/Voxsuji/blob/master/README.md" target="_blank" rel="noopener" data-i18n="foot.readme">README</a>
+      <a href="https://github.com/mumuer1024" target="_blank" rel="noopener" data-i18n="foot.author">作者 @mumuer1024</a>
+      <a href="https://github.com/mumuer1024/Voxsuji/issues" target="_blank" rel="noopener" data-i18n="foot.issues">Issues &amp; PRs</a>
+    </div>
+    <div data-i18n="foot.license">MIT License · Copyright © 2026 Nikoleta Sterling</div>
+    <div class="license" data-i18n="foot.note">个人开源项目，best-effort 维护；Provider 与平台 API 可能随时间变化。Voxsuji 由 vox（声音）与速记（suji）而来：声音进来，文字出去。</div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ================= i18n ================= */
+  var I18N = {
+    "nav.pipeline": { zh: "处理流程", en: "Pipeline" },
+    "nav.features": { zh: "特性", en: "Features" },
+    "nav.install": { zh: "快速开始", en: "Install" },
+    "nav.outputs": { zh: "输出", en: "Outputs" },
+    "nav.agent": { zh: "Agent 工作流", en: "AI Agent" },
+    "hero.pill": { zh: "CLI 工具 · Python · yt-dlp 驱动", en: "CLI tool · Python · powered by yt-dlp" },
+    "hero.tagline": { zh: "把在线视频变成<span class=\"hl\">结构化、可缓存</span>的文字稿", en: "Turn an online video URL into <span class=\"hl\">structured, cacheable</span> text" },
+    "hero.desc": { zh: "Voxsuji 是一个小型 CLI：给定一个视频 URL，优先使用现成字幕；没有字幕时自动提取音频并调用你配置的云端 ASR。输出 JSON、Markdown 和 SRT，既适合直接阅读，也适合交给 AI Agent 继续处理。", en: "Voxsuji is a small CLI: give it a video URL, it prefers existing subtitles; when none are available it extracts the audio and calls the cloud ASR you configured. It outputs JSON, Markdown and SRT — readable by humans and by AI agents." },
+    "hero.out1": { zh: "发现可用字幕，跳过 ASR", en: "subtitles found — skipping ASR" },
+    "hero.out2": { zh: "文字稿已生成 · 19 段 · 1632 字符", en: "transcript ready · 19 segments · 1632 chars" },
+    "cta.start": { zh: "快速开始", en: "Get started" },
+    "cta.repo": { zh: "在 GitHub 上查看", en: "View on GitHub" },
+    "stat.sub": { zh: "字幕优先", en: "Subtitle-first" },
+    "stat.sub2": { zh: "有字幕就不花钱调 ASR", en: "no paid ASR when subtitles exist" },
+    "stat.prov": { zh: "云端 ASR Provider", en: "cloud ASR providers" },
+    "stat.fmt": { zh: "输出格式 · JSON / MD / SRT", en: "output formats · JSON / MD / SRT" },
+    "stat.llm": { zh: "LLM 中立", en: "LLM-neutral" },
+    "stat.llm2": { zh: "总结交给任意 AI", en: "summarize with any AI you like" },
+    "pipe.kicker": { zh: "HOW IT WORKS", en: "HOW IT WORKS" },
+    "pipe.title": { zh: "一个 URL，三段输出", en: "One URL, three outputs" },
+    "pipe.sub": { zh: "Voxsuji 处理视频的核心流程：字幕优先，ASR 兜底，结果统一格式化。", en: "The core pipeline: subtitle-first, ASR as fallback, everything normalized." },
+    "pipe.n1t": { zh: "视频 URL", en: "Video URL" },
+    "pipe.n1d": { zh: "`voxsuji transcript &lt;URL&gt;` — 只需一条命令。", en: "`voxsuji transcript &lt;URL&gt;` — one command is all it takes." },
+    "pipe.n2t": { zh: "yt-dlp 获取视频信息与字幕", en: "yt-dlp fetches metadata & subtitles" },
+    "pipe.n2d": { zh: "提取能力来自 yt-dlp；YouTube 是主要验证来源，其他支持的网站按 best-effort 工作。", en: "Extraction is powered by yt-dlp; YouTube is the primary verified source, others work best-effort." },
+    "pipe.n3t": { zh: "发现可用字幕？", en: "Usable subtitles?" },
+    "pipe.b1t": { zh: "有字幕 → 直接解析", en: "Yes → parse subtitles" },
+    "pipe.b1d": { zh: "不产生 ASR 调用，零额外成本，通常也是最快的路径。", en: "No ASR call, zero extra cost, usually the fastest path." },
+    "pipe.b2t": { zh: "无字幕 → ASR fallback", en: "No → ASR fallback" },
+    "pipe.b2d": { zh: "提取音频 → 临时上传 S3-compatible 对象存储 → 调用云端 ASR（阿里云百炼 / 火山引擎 / 腾讯云）。临时对象在转录完成后自动清理。", en: "Extract audio → temp-upload to S3-compatible storage → cloud ASR (Bailian / Volcengine / Tencent). The temp object is cleaned up afterwards." },
+    "pipe.n4t": { zh: "统一格式化", en: "Normalize" },
+    "pipe.n4d": { zh: "字幕或 ASR 结果归一化为同一份结构化 transcript，是后续所有输出的唯一数据源。", en: "Subtitles or ASR output are normalized into one structured transcript — the single source for every output." },
+    "pipe.n5t": { zh: "输出 JSON / Markdown / SRT", en: "Output JSON / Markdown / SRT" },
+    "pipe.n5d": { zh: "同一份 transcript 生成三种格式：JSON 权威、Markdown 易读、SRT 可当字幕文件。", en: "One transcript, three formats: JSON (authoritative), Markdown (readable), SRT (usable as subtitles)." },
+    "feat.kicker": { zh: "FEATURES", en: "FEATURES" },
+    "feat.title": { zh: "设计原则", en: "Design principles" },
+    "feat.sub": { zh: "Voxsuji 只负责把视频可靠地变成文字，其余交给你的工具链。", en: "Voxsuji reliably turns video into text; everything else belongs to your toolchain." },
+    "feat.t1": { zh: "字幕优先", en: "Subtitle-first" },
+    "feat.d1": { zh: "平台已有可用字幕时直接使用，不产生 ASR 调用。不要为了免费的东西付费。", en: "Existing usable subtitles are used as-is — no ASR call. Don't pay for what's free." },
+    "feat.k1": { zh: "SUBTITLES FIRST", en: "SUBTITLES FIRST" },
+    "feat.t2": { zh: "云端 ASR 兜底", en: "Cloud ASR fallback" },
+    "feat.d2": { zh: "没有字幕时自动提取音频，调用你配置的阿里云百炼、火山引擎或腾讯云。", en: "When subtitles are unavailable, audio is transcribed with your configured Bailian, Volcengine or Tencent account." },
+    "feat.k2": { zh: "3 PROVIDERS", en: "3 PROVIDERS" },
+    "feat.t3": { zh: "本地缓存", en: "Local cache" },
+    "feat.d3": { zh: "处理过的视频保存在 cache/&lt;platform&gt;/&lt;video_id&gt;/，再次运行直接复用；--refresh 强制重取。", en: "Completed transcripts are stored under cache/&lt;platform&gt;/&lt;video_id&gt;/ and reused; --refresh re-processes." },
+    "feat.k3": { zh: "CACHEABLE", en: "CACHEABLE" },
+    "feat.t4": { zh: "结构化输出", en: "Structured output" },
+    "feat.d4": { zh: "一份标准化 transcript 同时产出 JSON、Markdown 和 SRT，人和程序都好用。", en: "One normalized transcript yields JSON, Markdown and SRT — useful for both humans and programs." },
+    "feat.k4": { zh: "JSON · MD · SRT", en: "JSON · MD · SRT" },
+    "feat.t5": { zh: "Agent 友好", en: "Agent-friendly" },
+    "feat.d5": { zh: "stdout 只返回紧凑 JSON 摘要，不会把几小时的文字稿灌进 Agent 的上下文。", en: "stdout returns one compact JSON summary — hours of transcript never flood an agent's context." },
+    "feat.k5": { zh: "AGENT-FIRST", en: "AGENT-FIRST" },
+    "feat.t6": { zh: "不绑定厂商", en: "No vendor lock-in" },
+    "feat.d6": { zh: "任意 S3-compatible 对象存储即可；三家 ASR 相互独立，只配你实际使用的一家。", en: "Any S3-compatible storage works; the three ASR adapters are independent — configure only the one you use." },
+    "feat.k6": { zh: "NO LOCK-IN", en: "NO LOCK-IN" },
+    "qs.kicker": { zh: "QUICK START", en: "QUICK START" },
+    "qs.title": { zh: "快速开始", en: "Quick start" },
+    "qs.sub": { zh: "Python 3.10+ 和 ffmpeg 即可。yt-dlp 会自动装进项目自己的虚拟环境，不碰系统 Python。", en: "Just Python 3.10+ and ffmpeg. yt-dlp installs itself into the project-local virtualenv — your system Python stays untouched." },
+    "qs.cmds": { zh: "📌 常用命令", en: "📌 Common commands" },
+    "qs.c1": { zh: "# 克隆仓库", en: "# clone the repo" },
+    "qs.c2": { zh: "# 检查依赖与配置", en: "# check dependencies & config" },
+    "qs.c3": { zh: "# 字幕优先，无字幕时自动 ASR", en: "# subtitle-first; ASR only when needed" },
+    "qs.c4": { zh: "ℹ stdout 只返回 JSON 摘要，不会刷屏整个文字稿", en: "ℹ stdout returns only a JSON summary — the transcript never floods your terminal" },
+    "qs.note": { zh: "--force-asr 会跳过原本免费的字幕路径并产生 ASR 费用，非必要不要用。", en: "--force-asr skips the free subtitle path and incurs ASR costs — avoid unless needed." },
+    "qs.agent": { zh: "🤖 直接交给 Agent", en: "🤖 Hand it to an agent" },
+    "qs.agent2": { zh: "在 Claude Code、Codex、Cursor 等工具里运行 voxsuji，读取生成的 transcript.md 再总结即可——Voxsuji 本身不调用任何 LLM。", en: "Run voxsuji inside Claude Code, Codex, Cursor… read the generated transcript.md and summarize — Voxsuji itself never calls an LLM." },
+    "out.kicker": { zh: "OUTPUTS", en: "OUTPUTS" },
+    "out.title": { zh: "输出什么", en: "What you get" },
+    "out.sub": { zh: "默认缓存结构，以及成功时 stdout 的 JSON 契约。", en: "The default cache layout, and the stdout JSON contract on success." },
+    "out.tree": { zh: "· 缓存目录结构", en: "· cache layout" },
+    "out.json": { zh: "stdout · JSON 契约", en: "stdout · JSON contract" },
+    "out.copy": { zh: "复制", en: "Copy" },
+    "ag.kicker": { zh: "AI AGENT", en: "AI AGENT" },
+    "ag.title": { zh: "和 AI Agent 一起使用", en: "Using it with AI agents" },
+    "ag.sub": { zh: "Voxsuji 有意不把完整文字稿输出到 stdout——几小时的视频不会突然塞满 Agent 的上下文。", en: "Full transcripts are intentionally kept off stdout — hours of video never blow up an agent's context." },
+    "ag.s1": { zh: "用户给出视频 URL", en: "User provides a video URL" },
+    "ag.s2": { zh: "Agent 运行 ", en: "Agent runs " },
+    "ag.s3": { zh: "读取 stdout 的 JSON summary", en: "Reads the stdout JSON summary" },
+    "ag.s4": { zh: "找到 ", en: "Opens " },
+    "ag.s5": { zh: "增量读取 transcript.md（长文字稿分段读）", en: "Reads transcript.md incrementally (long transcripts in chunks)" },
+    "ag.s6": { zh: "总结 / 整理 / 分析，按你的需求输出", en: "Summarizes / organizes / analyzes as you ask" },
+    "ag.prompt": { zh: "可以直接对 Agent 说的话", en: "What you can tell an agent" },
+    "ag.promptBody": { zh: "“用 voxsuji 获取这个视频的完整文字稿：优先使用平台现有字幕，必要时使用已配置的 ASR。\n完成后读取生成的 Markdown 文字稿，并为我总结主要内容。不要修改 voxsuji 项目本身。”<span class=\"c\">\nprompts/ 目录另提供 full-summary / structured-notes / lecture-notes / transcript-cleanup 模板</span>", en: "“Use the voxsuji CLI in this project to obtain a complete transcript of this video. Prefer existing platform subtitles and use the configured ASR fallback only when necessary. Then read the generated Markdown transcript and summarize the main content. Do not modify the voxsuji project itself.”<span class=\"c\">\nThe prompts/ folder also ships full-summary / structured-notes / lecture-notes / transcript-cleanup templates</span>" },
+    "nav.guide": { zh: "使用指南", en: "Guide" },
+    "guide.kicker": { zh: "DOCS", en: "DOCS" },
+    "guide.title": { zh: "人机协作指南", en: "Human–AI guide" },
+    "guide.sub": { zh: "不写代码也能用。把这项工作交给 AI，或者把配套 Skill 装进你的 Agent。", en: "No code required. Hand the work to AI — or install the companion skill in your agent." },
+    "guide.t1": { zh: "给人：人机协作使用指南", en: "For humans: collaboration guide" },
+    "guide.d1": { zh: "从安装、配置到日常提示词，面向非技术用户。中文版 / English version。", en: "Installation, configuration and everyday prompts for non-technical users. Chinese / English." },
+    "guide.k1": { zh: "阅读指南 →", en: "READ THE GUIDE →" },
+    "guide.t2": { zh: "给 Agent：配套 Skill", en: "For agents: companion skill" },
+    "guide.d2": { zh: "复制到 dsh / Claude Code 的 skills 目录，让 Agent 知道何时、如何调用 Voxsuji。", en: "Copy it into dsh / Claude Code's skills directory so the agent knows when and how to call Voxsuji." },
+    "guide.k2": { zh: "安装 Skill →", en: "INSTALL THE SKILL →" },
+    "stack.kicker": { zh: "STACK", en: "STACK" },
+    "stack.title": { zh: "技术栈", en: "Tech stack" },
+    "foot.repo": { zh: "GitHub 仓库", en: "GitHub repo" },
+    "foot.readme": { zh: "README", en: "README" },
+    "foot.author": { zh: "作者 @mumuer1024", en: "Author @mumuer1024" },
+    "foot.issues": { zh: "Issues & PRs", en: "Issues & PRs" },
+    "foot.license": { zh: "MIT License · Copyright © 2026 Nikoleta Sterling", en: "MIT License · Copyright © 2026 Nikoleta Sterling" },
+    "foot.note": { zh: "个人开源项目，best-effort 维护；Provider 与平台 API 可能随时间变化。Voxsuji 由 vox（声音）与速记（suji）而来：声音进来，文字出去。", en: "A personal open-source project, maintained best-effort; provider and platform APIs may change. Voxsuji comes from vox (voice) and suji (速记, shorthand): voice in, text out." }
+  };
+
+  var lang = "zh";
+  try { lang = localStorage.getItem("voxsuji-lang") || "zh"; } catch (e) {}
+  if (lang !== "zh" && lang !== "en") lang = "zh";
+
+  var langBtn = document.getElementById("langToggle");
+
+  function applyLang(l) {
+    lang = l;
+    document.documentElement.lang = l === "zh" ? "zh-CN" : "en";
+    langBtn.textContent = l === "zh" ? "EN" : "中文";
+    var els = document.querySelectorAll("[data-i18n]");
+    for (var i = 0; i < els.length; i++) {
+      var el = els[i];
+      var key = el.getAttribute("data-i18n");
+      if (I18N[key] && I18N[key][l]) el.innerHTML = I18N[key][l];
+    }
+    try { localStorage.setItem("voxsuji-lang", l); } catch (e) {}
+  }
+
+  langBtn.addEventListener("click", function () {
+    applyLang(lang === "zh" ? "en" : "zh");
+  });
+  applyLang(lang);
+
+  /* ================= hero typing ================= */
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var heroCmd = document.getElementById("heroCmd");
+  if (reduced) {
+    heroCmd.textContent = "voxsuji transcript <URL>";
+  } else {
+    var CMD = "voxsuji transcript <URL>";
+    var i = 0;
+    (function typeNext() {
+      if (i <= CMD.length) {
+        heroCmd.textContent = CMD.slice(0, i);
+        i++;
+        setTimeout(typeNext, 55);
+      }
+    })();
+  }
+
+  /* ================= scroll reveal ================= */
+  var reveals = document.querySelectorAll(".reveal");
+  function showAll() {
+    for (var i = 0; i < reveals.length; i++) reveals[i].classList.add("in");
+  }
+  if (reduced || !("IntersectionObserver" in window)) {
+    showAll();
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          entries[i].target.classList.add("in");
+          io.unobserve(entries[i].target);
+        }
+      }
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    for (var i = 0; i < reveals.length; i++) io.observe(reveals[i]);
+  }
+
+  /* ================= copy JSON ================= */
+  var copyBtn = document.getElementById("copyJson");
+  copyBtn.addEventListener("click", function () {
+    var txt = document.getElementById("jsonSample").innerText;
+    function done() {
+      var old = copyBtn.textContent;
+      copyBtn.textContent = "✓";
+      setTimeout(function () { copyBtn.textContent = old; }, 1400);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(done).catch(function () { fallbackCopy(txt); done(); });
+    } else {
+      fallbackCopy(txt); done();
+    }
+  });
+  function fallbackCopy(txt) {
+    var ta = document.createElement("textarea");
+    ta.value = txt;
+    ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand("copy"); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+
+  /* ================= background particles ================= */
+  var canvas = document.getElementById("bgCanvas");
+  var ctx = canvas.getContext("2d");
+  var particles = [];
+  var W = 0, H = 0, DPR = 1;
+  var colors = ["34,211,238", "167,139,250", "240,171,252"];
+  var running = !reduced;
+
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    canvas.style.width = W + "px"; canvas.style.height = H + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var n = Math.max(40, Math.min(90, Math.floor(W * H / 16000)));
+    particles = [];
+    for (var i = 0; i < n; i++) {
+      particles.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: 0.6 + Math.random() * 1.6,
+        vx: (Math.random() - 0.5) * 0.25,
+        vy: -(0.12 + Math.random() * 0.35),
+        c: colors[Math.floor(Math.random() * colors.length)],
+        a: 0.25 + Math.random() * 0.45
+      });
+    }
+  }
+
+  var tick = 0;
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    tick++;
+    var L = 110;
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      p.x += p.vx + Math.sin(tick * 0.008 + i) * 0.12;
+      p.y += p.vy;
+      if (p.y < -8) { p.y = H + 8; p.x = Math.random() * W; }
+      if (p.x < -8) p.x = W + 8;
+      if (p.x > W + 8) p.x = -8;
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(" + p.c + "," + p.a + ")";
+      ctx.fill();
+      for (var j = i + 1; j < particles.length; j++) {
+        var q = particles[j];
+        var dx = p.x - q.x, dy = p.y - q.y;
+        var d2 = dx * dx + dy * dy;
+        if (d2 < L * L) {
+          var alpha = (1 - Math.sqrt(d2) / L) * 0.12;
+          ctx.strokeStyle = "rgba(148,163,184," + alpha + ")";
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.stroke();
+        }
+      }
+    }
+    if (running) requestAnimationFrame(draw);
+  }
+
+  function stop() { running = false; }
+  function start() { if (!running) { running = true; draw(); } }
+
+  window.addEventListener("resize", resize);
+  document.addEventListener("visibilitychange", function () {
+    if (document.hidden) stop(); else if (!reduced) start();
+  });
+
+  if (reduced) {
+    resize();
+    // draw one static frame so the background isn't empty
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i];
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(" + p.c + "," + p.a + ")";
+      ctx.fill();
+    }
+  } else {
+    resize();
+    start();
+  }
+
+  /* ================= footer year ================= */
+  var y = new Date().getFullYear();
+  if (y !== 2026) {
+    var el = document.querySelector("[data-i18n='foot.license']");
+    if (el) el.textContent = "MIT License · Copyright © 2026-" + y + " Nikoleta Sterling";
+  }
+})();
+</script>
+</body>
+</html>
